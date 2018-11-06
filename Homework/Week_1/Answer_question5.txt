@@ -1,0 +1,5 @@
+Question 5: What is a so called “branch” in Git terms and why would you use it?
+
+Answer: A branch is a pointer that points to the last "snapshot" that has been comitted by the user.
+	Because of this one can construct several branches to "save" the progress made untill the commit and it makes it possible
+	to work in only that "snapshot" and keep the changes seperated.
