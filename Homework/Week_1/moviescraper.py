@@ -60,6 +60,7 @@ def extract_movies(dom):
         for actor in actors_movie:
             actor = actor.get_text()
             actors.append(actor)
+
         # coverts actors (list) to string
         actors = ",".join(actors)
 

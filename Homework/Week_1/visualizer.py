@@ -59,15 +59,26 @@ def plot_ratings(dict):
         year.append(key)
         average.append(dict[str(key)])
 
-    # plots the average ratings against the years
+    # plots the average ratings against the years twice (with different y limits)
     fig, ax = plt.subplots()
-    plt.plot(year, average, color='blue', linestyle='solid')
     plt.xlabel("Year", fontsize=14, color='black')
     plt.xticks(year)
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-    plt.ylabel("Average Rating", fontsize=14, color='black')
-    plt.title("Average Movie Rating Per Year\n", fontsize=16, color='black')
+    plt.ylabel("Rating", fontsize=14, color='black')
+    plt.title("Average Movie Rating (IMDB) Per Year\n", fontsize=16, color='black')
+    plt.grid()
     plt.axis([START_YEAR, END_YEAR, 0, 10])
+    plt.plot(year, average, color='blue', linestyle='solid')
+
+    plt.figure(2)
+    plt.xlabel("Year", fontsize=14, color='black')
+    plt.xticks(year)
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    plt.ylabel("Rating", fontsize=14, color='black')
+    plt.title("Average Movie Rating (IMDB) Per Year\n", fontsize=16, color='black')
+    plt.grid()
+    plt.axis([START_YEAR, END_YEAR, min(average) - 0.5, 10])
+    plt.plot(year, average, color='blue', linestyle='solid')
     plt.show()
     return
 
