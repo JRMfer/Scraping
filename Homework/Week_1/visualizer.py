@@ -18,6 +18,8 @@ END_YEAR = 2018
 data_dict = {str(key): [] for key in range(START_YEAR, END_YEAR)}
 
 # Reads csv file and maps the information in an OrderedDict
+
+
 def csv_reader(file):
     """
     This function collects the ratings per year (IMDB) from a csv file
@@ -45,6 +47,8 @@ def csv_reader(file):
     return data_dict
 
 # plot the averages of the ratings per year:
+
+
 def plot_ratings(dict):
     """
     This function gets a dictionary and plots the values (averges ratings)
@@ -52,7 +56,7 @@ def plot_ratings(dict):
     """
     # creates lists to store values for year and averages
     year = []
-    average= []
+    average = []
 
     # append year and averegas to the lists
     for key in range(START_YEAR, END_YEAR):
@@ -65,7 +69,8 @@ def plot_ratings(dict):
     plt.xticks(year)
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
     plt.ylabel("Rating", fontsize=14, color='black')
-    plt.title("Average Movie Rating (IMDB) Per Year\n", fontsize=16, color='black')
+    plt.title("Average Movie Rating (IMDB) Per Year\n",
+              fontsize=16, color='black')
     plt.grid()
     plt.axis([START_YEAR, END_YEAR, 0, 10])
     plt.plot(year, average, color='blue', linestyle='solid')
@@ -77,12 +82,14 @@ def plot_ratings(dict):
     plt.xticks(year)
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
     plt.ylabel("Rating", fontsize=14, color='black')
-    plt.title("Average Movie Rating (IMDB) Per Year\n", fontsize=16, color='black')
+    plt.title("Average Movie Rating (IMDB) Per Year\n",
+              fontsize=16, color='black')
     plt.grid()
     plt.axis([START_YEAR, END_YEAR, min(average) - 0.5, max(average) + 0.5])
     plt.plot(year, average, color='blue', linestyle='solid')
     plt.show()
     return
+
 
 if __name__ == "__main__":
     ratings_movies = csv_reader(INPUT_CSV)

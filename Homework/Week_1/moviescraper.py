@@ -42,7 +42,8 @@ def extract_movies(dom):
         title = title.get_text()
 
         # find lister-item-year and collect year as text
-        year = header.find(attrs={"class": "lister-item-year text-muted unbold"})
+        year = header.find(
+            attrs={"class": "lister-item-year text-muted unbold"})
         year = year.get_text()
         year = ''.join(filter(lambda x: x.isdigit(), year))
 
@@ -112,7 +113,8 @@ def simple_get(url):
             else:
                 return None
     except RequestException as e:
-        print('The following error occurred during HTTP GET request to {0} : {1}'.format(url, str(e)))
+        print('The following error occurred during HTTP GET request to {0} : {1}'.format(
+            url, str(e)))
         return None
 
 
@@ -121,9 +123,9 @@ def is_good_response(resp):
     Returns true if the response seems to be HTML, false otherwise
     """
     content_type = resp.headers['Content-Type'].lower()
-    return (resp.status_code == 200
-            and content_type is not None
-            and content_type.find('html') > -1)
+    return (resp.status_code == 200 and
+            content_type is not None and
+            content_type.find('html') > -1)
 
 
 if __name__ == "__main__":
