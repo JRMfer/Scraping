@@ -11,7 +11,9 @@ from requests.exceptions import RequestException
 from contextlib import closing
 from bs4 import BeautifulSoup
 
-TARGET_URL = "https://www.imdb.com/search/title?title_type=feature&release_date=2008-01-01,2018-01-01&num_votes=5000,&sort=user_rating,desc"
+TARGET_URL = "https://www.imdb.com/search/title?title_type=feature&" \
+             "release_date=2008-01-01,2018-01-01&num_votes=5000,&" \
+             "sort=user_rating,desc"
 BACKUP_HTML = 'movies.html'
 OUTPUT_CSV = 'movies.csv'
 
