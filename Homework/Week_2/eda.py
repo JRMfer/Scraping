@@ -9,6 +9,7 @@ import csv
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import json
 
 # global variable for CSV file
 INPUT_CSV = "input.csv"
@@ -16,7 +17,8 @@ INPUT_CSV = "input.csv"
 
 def csv_reader(filename):
     data = pd.read_csv(filename)
-    # data = data[np.isfinite(data['EPS'])]
+    data = data[["Country", "Region", "GDP ($ per capita) dollars",
+                 "Pop. Density (per sq. mi.)", "Infant mortality (per 1000 births)"]]
     data = data.replace("unknown", np.nan)
     data = data.dropna(how='any')
     return data
@@ -34,21 +36,72 @@ def string_to_numeric(data, column):
     data[column] = pd.to_numeric(data[column])
     return data
 
+
 def make_float(data, column):
-    ## DEZE MOET NOG AANGEPAST WORDEN
+    data[column] = [x.replace(',', '.') for x in data[column]]
+    return data
+
+
+def rem_white(data, column):
+    data[column] = [x.rstrip() for x in data[column]]
+    return data
+
+
+def preprocessing(data):
+    data = remove_string(
+        data, "GDP ($ per capita) dollars", "dollars")
+    data = string_to_numeric(data, "GDP ($ per capita) dollars")
+    data = make_float(data, "Pop. Density (per sq. mi.)")
+    data = make_float(data, "Infant mortality (per 1000 births)")
+    data = string_to_numeric(data, "Pop. Density (per sq. mi.)")
+    data = string_to_numeric(
+        data, "Infant mortality (per 1000 births)")
+    data = rem_white(data, "Region")
+    data = data[["Country", "Region", "GDP ($ per capita) dollars",
+                 "Pop. Density (per sq. mi.)",
+                 "Infant mortality (per 1000 births)"]]
+    return data
+
+
+def central_tendency(data, column, xlabel):
+    remove_outliers(data, column)
+    data.hist(column)
+    plt.title(column, fontsize=16)
+    plt.xlabel(xlabel, fontsize=14)
+    plt.ylabel("Frequency", fontsize=14)
+    plt.show()
+    return
+
+def remove_outliers(data, column):
+    mean = data[column].mean()
+    median = data[column].median()
+    mode = data[column].mode()
+    std = data[column].std()
+    data[column] = data[column].mask(data[column] > mean + 3 * std)
+    data = data.dropna(how='any')
+    return data
+
+def boxplot(data, column):
+    data.boxplot(column, grid=False)
+    data.boxplot(column, by="Region", rot=90, grid=False)
+    plt.show()
+    return
+
+def make_json(data):
     return
 
 
 if __name__ == "__main__":
     data_frame = csv_reader(INPUT_CSV)
-    data_frame = remove_string(data_frame, "GDP ($ per capita) dollars", "dollars")
-    data_frame = string_to_numeric(data_frame, "GDP ($ per capita) dollars")
-    data_frame = string_to_numeric(data_frame, "Population")
-    data_frame = string_to_numeric(data_frame, "Pop. Density (per sq. mi.)")
-    data_frame = string_to_numeric(data_frame, "Infant mortality (per 1000 births)")
+    data_frame = preprocessing(data_frame)
+    central_tendency(data_frame, "GDP ($ per capita) dollars", "Dollars")
     print(data_frame)
-    print(data_frame["GDP ($ per capita) dollars"])
-    test = data_frame["GDP ($ per capita) dollars"][0] + \
-        data_frame["GDP ($ per capita) dollars"][1]
-    print(test)
-    print(data_frame["Pop. Density (per sq. mi.)"])
+    remove_outliers(data_frame, "Infant mortality (per 1000 births)")
+    boxplot(data_frame, "Infant mortality (per 1000 births)")
+    print(data_frame['Region'])
+    # print(data_frame["GDP ($ per capita) dollars"])
+    # test = data_frame["GDP ($ per capita) dollars"][0] + \
+    #     data_frame["GDP ($ per capita) dollars"][1]
+    # print(test)
+    # print(data_frame["Pop. Density (per sq. mi.)"])
+    # print(data_frame["Infant mortality (per 1000 births)"])
