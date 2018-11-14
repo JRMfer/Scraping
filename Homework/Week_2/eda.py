@@ -122,7 +122,7 @@ def make_json(data):
 
 if __name__ == "__main__":
 
-    # reads certain columns of CSV file
+    # reads certain columns of CSV file into a dataframe
     data_frame = csv_reader(INPUT_CSV, ["Country", "Region",
                                         "GDP ($ per capita) dollars",
                                         "Pop. Density (per sq. mi.)",
