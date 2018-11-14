@@ -88,8 +88,7 @@ def boxplot(data, column):
     return
 
 def make_json(data):
-    transform = data.set_index("Country").to_json("eda.json", orient="index")
-    print(transform)
+    data.set_index("Country").to_json("eda.json", orient="index")
     return
 
 
@@ -100,9 +99,3 @@ if __name__ == "__main__":
     data_frame = remove_outliers(data_frame, "Infant mortality (per 1000 births)")
     boxplot(data_frame, "Infant mortality (per 1000 births)")
     make_json(data_frame)
-    # print(data_frame["GDP ($ per capita) dollars"])
-    # test = data_frame["GDP ($ per capita) dollars"][0] + \
-    #     data_frame["GDP ($ per capita) dollars"][1]
-    # print(test)
-    # print(data_frame["Pop. Density (per sq. mi.)"])
-    # print(data_frame["Infant mortality (per 1000 births)"])
