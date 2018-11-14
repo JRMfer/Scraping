@@ -1,0 +1,10 @@
+#!/usr/bin/env python
+# Name: Julien Fer
+# Student number: 10649441
+
+Histogram:
+When plotting the first histogram I noticed that there was an extremely high
+value for Surinam. Because it is not likely that the average person in
+Surinam earns that amount of money it is not a correct representation of the
+country. Therefore I removed this outlier from the data frame and plotted a new
+histogram without the outlier and also for the remainder of the analysis. 
