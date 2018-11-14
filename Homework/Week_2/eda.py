@@ -64,7 +64,7 @@ def preprocessing(data):
 
 
 def central_tendency(data, column, xlabel):
-    remove_outliers(data, column)
+    data = remove_outliers(data, column)
     data.hist(column)
     plt.title(column, fontsize=16)
     plt.xlabel(xlabel, fontsize=14)
@@ -88,6 +88,8 @@ def boxplot(data, column):
     return
 
 def make_json(data):
+    transform = data.set_index("Country").to_json("eda.json", orient="index")
+    print(transform)
     return
 
 
@@ -95,10 +97,9 @@ if __name__ == "__main__":
     data_frame = csv_reader(INPUT_CSV)
     data_frame = preprocessing(data_frame)
     central_tendency(data_frame, "GDP ($ per capita) dollars", "Dollars")
-    print(data_frame)
-    remove_outliers(data_frame, "Infant mortality (per 1000 births)")
+    data_frame = remove_outliers(data_frame, "Infant mortality (per 1000 births)")
     boxplot(data_frame, "Infant mortality (per 1000 births)")
-    print(data_frame['Region'])
+    make_json(data_frame)
     # print(data_frame["GDP ($ per capita) dollars"])
     # test = data_frame["GDP ($ per capita) dollars"][0] + \
     #     data_frame["GDP ($ per capita) dollars"][1]
