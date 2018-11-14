@@ -62,7 +62,7 @@ def preprocessing(data):
     data = data.replace("unknown", np.nan)
     data = data.dropna(how='any')
     data = remove_string(
-        data, "GDP ($ per capita) dollars", "dollars")
+                         data, "GDP ($ per capita) dollars", "dollars")
     data = string_to_numeric(data, "GDP ($ per capita) dollars")
     data = make_float(data, "Pop. Density (per sq. mi.)")
     data = make_float(data, "Infant mortality (per 1000 births)")
@@ -89,7 +89,8 @@ def plot_hist(data, column, xlabel, ylabel):
     Plots a histogram (with xlabel and ylabel given by user)
     of specific column of dataframe
     """
-    data.hist(column)
+    plt.style.use("seaborn-darkgrid")
+    data.hist(column, bins=50, color="green")
     plt.title(column, fontsize=16)
     plt.xlabel(xlabel, fontsize=14)
     plt.ylabel(ylabel, fontsize=14)
@@ -122,16 +123,19 @@ def make_json(data):
 if __name__ == "__main__":
 
     # reads certain columns of CSV file
-    data_frame = csv_reader(INPUT_CSV, ["Country", "Region", "GDP ($ per capita) dollars",
-                 "Pop. Density (per sq. mi.)", "Infant mortality (per 1000 births)"])
+    data_frame = csv_reader(INPUT_CSV, ["Country", "Region",
+                                        "GDP ($ per capita) dollars",
+                                        "Pop. Density (per sq. mi.)",
+                                        "Infant mortality (per 1000 births)"])
 
     # preprocces dataframe
     data_frame = preprocessing(data_frame)
 
     # central tendency for GDP
-    central_tendency(data_frame, "GDP ($ per capita) dollars", "Dollars", "Frequency")
+    central_tendency(data_frame, "GDP ($ per capita) dollars", "Dollars",
+                     "Frequency")
 
-    # boxplot of infant mortality
+    # boxplots of infant mortality
     boxplot(data_frame, "Infant mortality (per 1000 births)")
 
     # convert dataframe to JSON file
