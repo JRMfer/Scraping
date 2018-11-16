@@ -26,6 +26,12 @@ def merge_dataframe(file1, file2, id, how):
     merged.to_csv("merged.csv", index=False)
     return merged
 
+def make_json(data):
+    """
+    Coverts dataframe to JSON file with as date as index
+    """
+    data.set_index("DATE").to_json("merged.json", orient="index")
+
 
 if __name__ == "__main__":
 
@@ -34,4 +40,5 @@ if __name__ == "__main__":
     data2 = csv_reader(INPUT_CSV2, ["DATE", "CPI" ])
     print(data2)
     data3 = merge_dataframe(data1, data2, "DATE", "outer")
-    print(data3)
+    print(data3[["CPI"][0]])
+    make_json(data3)
