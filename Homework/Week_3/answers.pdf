@@ -31,4 +31,10 @@ equal to the value given by the user.
 
 3. Explain what higher order functions are.
 
+Higher order functions are functions that operate on other functions, either by
+taking them as arguments or by returning them.
+
 4. Explain what a query selector is and give an example line of JavaScript that uses a query selector.
+
+The querySelector() is a method that returns the first element that matches a
+specified CSS selector(s) in the document.
