@@ -23,14 +23,14 @@ def csv_reader(filename, columns):
 
 def merge_dataframe(file1, file2, id, how):
     merged = file1.merge(file2, on=id, how=how)
-    merged.to_csv("merged.csv", index=False)
+    merged.to_csv("data.csv", index=False)
     return merged
 
 def make_json(data):
     """
     Coverts dataframe to JSON file with as date as index
     """
-    data.set_index("DATE").to_json("merged.json", orient="index")
+    data.set_index("DATE").to_json("data.json", orient="index")
 
 
 if __name__ == "__main__":
