@@ -14,11 +14,136 @@
   </head>
 
   <body>
-    <canvas>
+    <canvas id="myCanvas" width="1000" height="1000">
 
     </canvas>
     <script>
-    console.log("Hello world!")
+    var file = "data.json";
+    var txtFile =  new XMLHttpRequest();
+    var width = 800;
+    var height = 400;
+    var dataUnemployment = [];
+    var dataCpi = [];
+    txtFile.onreadystatechange = function(){
+      if (txtFile.readyState === 4 && txtFile.status == 200){
+        var data = JSON.parse(txtFile.responseText);
+        var dates = Object.keys(data);
+        dates.forEach(function(date){
+          dataUnemployment.push(data[date]["UNEMPLOYMENT"]);
+          dataCpi.push(data[date]["CPI"]);
+        });
+        console.log(dataUnemployment);
+        console.log(dataCpi);
+        console.log(dates);
+        dataUnemployment.forEach(function(element){
+          console.log(typeof(element));
+        });
+        console.log(Math.min.apply(0, dataUnemployment));
+        var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+
+        // make axis for line graph
+        ctx.beginPath();
+        ctx.strokeStyle = "black";
+        const linewidth = 2;
+        ctx.lineWidth = linewidth;
+        ctx.moveTo(100, 50);
+        ctx.lineTo(100, height - linewidth);
+        ctx.lineTo(width, height - linewidth);
+        ctx.stroke();
+
+        // hardcoded transformation data points
+        domain_y = [0, 10];
+        range_y = [50, height - linewidth];
+        var ytransform = createTransform(domain_y, range_y);
+        domain_x = [0, 69];
+        range_x = [100 + linewidth, width];
+        var xtransform = createTransform(domain_x, range_x);
+
+        var dataPoints = [];
+        for (var i = 0; i < dates.length; i++){
+          dataPoints.push(i);
+          if (i % 2 === 0){
+            ctx.beginPath();
+            ctx.strokeStyle = "black"
+            ctx.lineWidth = linewidth;
+            ctx.moveTo(xtransform(i), height - linewidth);
+            ctx.lineTo(xtransform(i), height + 15 - linewidth);
+            ctx.rotate(-Math.PI / 2);
+            ctx.font = "20px Georgia";
+            ctx.fillText(dates[i], -(height + 120 - linewidth), xtransform(i));
+            ctx.rotate(Math.PI / 2);
+            ctx.stroke();
+          }
+        }
+        console.log(dataPoints);
+
+        // transform all the points in the list according createTransform
+        for (var i = 0; i < dataPoints.length; i++){
+          dataPoints[i] = xtransform(dataPoints[i]);
+          dataUnemployment[i] = ytransform(dataUnemployment[i]);
+        }
+        console.log(dataPoints);
+
+
+        // make graph
+        ctx.beginPath();
+        ctx.strokeStyle = "blue";
+        ctx.lineWidth = 1;
+        ctx.moveTo(dataPoints[0], dataUnemployment[0]);
+        for (var i = 1; i < dataPoints.length; i++){
+          ctx.lineTo(dataPoints[i], dataUnemployment[i]);
+          ctx.stroke();
+        }
+
+        // make title
+        ctx.font = "40px Georgia";
+        ctx.fillText("Unemployment USA 1948-2017",(width / 2 - 250), 40);
+
+        for (var i = 0; i < 11; i++){
+          ctx.beginPath();
+          ctx.strokeStyle = "black"
+          ctx.lineWidth = linewidth;
+          ctx.moveTo(100, ytransform(i));
+          ctx.lineTo(85, ytransform(i));
+          ctx.font = "20px Georgia";
+          ctx.fillText(10 - i, 65, ytransform(i));
+          ctx.stroke();
+        }
+        // make title for x axis
+        ctx.rotate(-Math.PI / 2);
+        ctx.font = "30px Georgia";
+        ctx.fillText("Percentages", -(height / 2 + 75), 45);
+        ctx.rotate(Math.PI / 2);
+      }
+    }
+    txtFile.open("GET", file);
+    txtFile.send();
+
+
+
+    function createTransform(domain, range){
+	// domain is a two-element array of the data bounds [domain_min, domain_max]
+	// range is a two-element array of the screen bounds [range_min, range_max]
+	// this gives you two equations to solve:
+	// range_min = alpha * domain_min + beta
+	// range_max = alpha * domain_max + beta
+ 		// a solution would be:
+
+    var domain_min = domain[0]
+    var domain_max = domain[1]
+    var range_min = range[0]
+    var range_max = range[1]
+
+    // formulas to calculate the alpha and the beta
+   	var alpha = (range_max - range_min) / (domain_max - domain_min)
+    var beta = range_max - alpha * domain_max
+
+    // returns the function for the linear transformation (y= a * x + b)
+    return function(x){
+      return alpha * x + beta;
+    }
+}
     </script>
   </body>
 </html>

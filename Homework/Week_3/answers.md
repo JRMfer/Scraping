@@ -33,4 +33,5 @@ taking them as arguments or by returning them.
 4. Explain what a query selector is and give an example line of JavaScript that uses a query selector.
 
 The querySelector() is a method that returns the first element that matches a
-specified CSS selector(s) in the document.
+specified CSS selector(s) in the document. An example of a command is document.querySelector("p");
+This gets the first <p> element in the document.
