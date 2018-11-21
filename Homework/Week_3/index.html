@@ -14,55 +14,64 @@
   </head>
 
   <body>
-    <canvas id="myCanvas" width="1000" height="1000">
+    <canvas id="myCanvas" width="1500" height="1000">
 
     </canvas>
     <script>
+    // initialize global variables width, height and dataUnemployment
     var file = "data.json";
-    var txtFile =  new XMLHttpRequest();
-    var width = 800;
-    var height = 400;
+    var width = 1000;
+    var height = 600;
     var dataUnemployment = [];
-    var dataCpi = [];
+    var txtFile =  new XMLHttpRequest();
     txtFile.onreadystatechange = function(){
       if (txtFile.readyState === 4 && txtFile.status == 200){
         var data = JSON.parse(txtFile.responseText);
         var dates = Object.keys(data);
         dates.forEach(function(date){
           dataUnemployment.push(data[date]["UNEMPLOYMENT"]);
-          dataCpi.push(data[date]["CPI"]);
         });
-        console.log(dataUnemployment);
-        console.log(dataCpi);
-        console.log(dates);
-        dataUnemployment.forEach(function(element){
-          console.log(typeof(element));
-        });
-        console.log(Math.min.apply(0, dataUnemployment));
         var canvas = document.getElementById("myCanvas");
         var ctx = canvas.getContext("2d");
+
+        // writes name, studentnumber and link to dataset
+        ctx.font = "20px Georgia";
+        ctx.fillStyle = "black";
+        ctx.fillText("Name: ", 0, 20);
+        ctx.fillText("Studentnumber: ", 0, 40);
+        ctx.fillText("Link: ", 0, 60);
+        ctx.font = "15px Georgia";
+        ctx.fillText("Julien Fer", 65, 20);
+        ctx.fillText("10649441", 150, 40);
+        ctx.fillText("https://fred.stlouisfed.org/series/UNRATE", 50, 60);
 
         // make axis for line graph
         ctx.beginPath();
         ctx.strokeStyle = "black";
         const linewidth = 2;
         ctx.lineWidth = linewidth;
-        ctx.moveTo(100, 50);
+        ctx.moveTo(100, 200);
         ctx.lineTo(100, height - linewidth);
         ctx.lineTo(width, height - linewidth);
         ctx.stroke();
 
-        // hardcoded transformation data points
+        // setup transform function for x and y coordinates
         domain_y = [0, 10];
-        range_y = [50, height - linewidth];
+        range_y = [200, height - linewidth];
         var ytransform = createTransform(domain_y, range_y);
         domain_x = [0, 69];
         range_x = [100 + linewidth, width];
         var xtransform = createTransform(domain_x, range_x);
 
+        // list for ascending x values from 0 till length dataset
         var dataPoints = [];
+
+        // starts loop
         for (var i = 0; i < dates.length; i++){
+          // push ascending x values
           dataPoints.push(i);
+
+          // draws lines and writes the year every 2 turns on x-axis
           if (i % 2 === 0){
             ctx.beginPath();
             ctx.strokeStyle = "black"
@@ -71,20 +80,19 @@
             ctx.lineTo(xtransform(i), height + 15 - linewidth);
             ctx.rotate(-Math.PI / 2);
             ctx.font = "20px Georgia";
-            ctx.fillText(dates[i], -(height + 120 - linewidth), xtransform(i));
+            var year = dates[i].slice(0, 4);
+            ctx.fillStyle = "black"
+            ctx.fillText(year, -(height + 75 - linewidth), xtransform(i));
             ctx.rotate(Math.PI / 2);
             ctx.stroke();
           }
         }
-        console.log(dataPoints);
 
-        // transform all the points in the list according createTransform
+        // transform all the points
         for (var i = 0; i < dataPoints.length; i++){
           dataPoints[i] = xtransform(dataPoints[i]);
           dataUnemployment[i] = ytransform(dataUnemployment[i]);
         }
-        console.log(dataPoints);
-
 
         // make graph
         ctx.beginPath();
@@ -98,8 +106,10 @@
 
         // make title
         ctx.font = "40px Georgia";
-        ctx.fillText("Unemployment USA 1948-2017",(width / 2 - 250), 40);
+        ctx.fillStyle = "black";
+        ctx.fillText("Unemployment USA 1948-2017",(width / 2 - 250), 170);
 
+        // make lines for values on y axis
         for (var i = 0; i < 11; i++){
           ctx.beginPath();
           ctx.strokeStyle = "black"
@@ -110,11 +120,15 @@
           ctx.fillText(10 - i, 65, ytransform(i));
           ctx.stroke();
         }
-        // make title for x axis
+        // make title for y axis
         ctx.rotate(-Math.PI / 2);
         ctx.font = "30px Georgia";
-        ctx.fillText("Percentages", -(height / 2 + 75), 45);
+        ctx.fillText("Percentages", -(height / 2 + 150), 45);
         ctx.rotate(Math.PI / 2);
+
+        // make title for x axis
+        ctx.font = "30px Georgia";
+        ctx.fillText("Year", width / 2, height + 125);
       }
     }
     txtFile.open("GET", file);
