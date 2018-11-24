@@ -31,6 +31,11 @@
               .append("p")
               .style("font size", "12px")
               .text("The bar chart visualizes the unemployment rate in the netherlands per province")
+
+            d3.json("arbeidsdeelname.json", function(d) {
+              data = d;
+              console.log(data);
+            });
         </script>
     </body>
 </html>
