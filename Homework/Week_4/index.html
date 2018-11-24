@@ -1,8 +1,36 @@
 <!DOCTYPE html>
-<html>
-  <head>
-  </head>
-  <body>
-    <!-- This is where your bar chart will go -->
-  </body>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <!-- <title>D3 Test</title> -->
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            // Your beautiful D3 code will go here
+            d3.select("head")
+              .append("title")
+              .text("Labour participation Netherlands");
+
+            d3.select("body")
+              .style("font-size", "16px")
+              .style("text-dectoration", "bold")
+              .text("Labour participation NL per province");
+
+            d3.select("body")
+              .append("p")
+              .style("font size", "12px")
+              .text("Name: Julien Fer");
+
+            d3.select("body")
+              .append("p")
+              .style("font size", "12px")
+              .text("Studentnumber: 10649441");
+
+            d3.select("body")
+              .append("p")
+              .style("font size", "12px")
+              .text("The bar chart visualizes the unemployment rate in the netherlands per province")
+        </script>
+    </body>
 </html>
