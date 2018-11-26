@@ -32,11 +32,19 @@
               .style("font size", "12px")
               .text("The bar chart visualizes the unemployment rate in the netherlands per province")
 
+              d3.json("arbeidsdeelname.json", function(data){
+                function initChart(){
+                    //all your code for initChart here
+                    
+                };
+                initChart();
+            });
+
             // d3.json("https://localhost:8080/arbeidsdeelname.json").then( function(data){
             //   console.log(data);
             // });
 
-            // d3.json("data\arbeidsdeelname.json", function(data) {
+            // d3.json("arbeidsdeelname.json", function(data) {
             //   // data = d;
             //   console.log(data[0]);
             // });
