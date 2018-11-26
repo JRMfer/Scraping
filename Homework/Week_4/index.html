@@ -36,16 +36,34 @@
             var startYear = 2010;
             var endYear = 2018;
             var dataset = [];
+            var counter = 0;
             var txtFile =  new XMLHttpRequest();
             txtFile.onreadystatechange = function(){
               if (txtFile.readyState === 4 && txtFile.status == 200){
-                var dataset = JSON.parse(txtFile.responseText);
-                var provinces = Object.keys(dataset);
-                var values = Object.values(dataset);
-                var years = Object.keys(values);
-                console.log(dataset[provinces[0]]["2010"])
-                console.log(values);
-                console.log(years);
+                var data = JSON.parse(txtFile.responseText);
+                var provinces = Object.keys(data);
+                // console.log(provinces);
+                // console.log(data[provinces[0]]["2010"])
+                provinces.forEach( function(province){
+                  var dataUnemployment = [];
+                  for (var i = startYear; i <= endYear; i++){
+                    var year = i.toString();
+                    dataUnemployment.push(data[province][year]);
+                  }
+                  dataset.push(dataUnemployment);
+                  // console.log(dataUnemployment);
+                  d3.select("body").append("p")
+                    .data(dataUnemployment)
+                    .enter()
+                    .append("p")
+                    .text(province);
+                });
+                // d3.select("body")
+                //   .data(dataset)
+                //   .enter()
+                //   .append("p")
+                //   .text("dataset");
+                console.log(dataset);
               }
             }
           txtFile.open("GET", file);
