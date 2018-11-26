@@ -28,6 +28,14 @@ def make_json(data):
     """
     data.set_index("Perioden").to_json("arbeidsdeelname.json", orient="index")
 
+def preprocessing(data):
+    """
+    Preprocess data as necessary
+    """
+    data = remove_string(data, "Perioden", "(PV)")
+    data.rename(columns = {'2018 3e kwartaal':'2018'}, inplace = True)
+    return data
+
 def remove_string(data, column, string):
     """
     Strips entire column dataframe of string (only rightside)
@@ -39,7 +47,7 @@ def remove_string(data, column, string):
 if __name__ == "__main__":
 
     data = csv_reader(INPUT_CSV)
-    data = remove_string(data, "Perioden", "(PV)")
-    print(data["Perioden"])
+    data = preprocessing(data)
+    print(data)
     make_json(data)
     # make_json(data)
