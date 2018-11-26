@@ -35,6 +35,10 @@
             var file = "arbeidsdeelname.json";
             var startYear = 2010;
             var endYear = 2018;
+            const WIDTH = 500;
+            const HEIGHT = 500;
+            var yearsInt = [];
+            var yearsString = [];
             var dataset = [];
             var counter = 0;
             var txtFile =  new XMLHttpRequest();
@@ -49,13 +53,20 @@
                   for (var i = startYear; i <= endYear; i++){
                     var year = i.toString();
                     dataUnemployment.push(data[province][year]);
+                    // d3.select("body")
+                    //   .data(dataUnemployment[startYear - startYear])
+                    //   .enter()
+                    //   .append("p")
+                    //   .attr("class", province + year)
+                    //   .text(province + year);
                   }
                   dataset.push(dataUnemployment);
                   // console.log(dataUnemployment);
-                  d3.select("body").append("p")
+                  d3.select("body")
                     .data(dataUnemployment)
                     .enter()
                     .append("p")
+                    .attr("class", province)
                     .text(province);
                 });
                 // d3.select("body")
@@ -64,6 +75,30 @@
                 //   .append("p")
                 //   .text("dataset");
                 console.log(dataset);
+
+                var svg = d3.select("body")
+                .append("svg")
+                .attr("width", WIDTH)
+                .attr("height", HEIGHT);
+
+                var rectangles = svg.selectAll("rect")
+                                  .data(dataset[0])
+                                  .enter()
+                                  .append("rect");
+
+                rectangles.attr("x", function(d, i) {
+                  return 20 * i;
+                })
+                       .attr("y", function(d, i) {
+                         return i * 5;
+                       })
+                       .attr("width", 30)
+                       .attr("height", 20)
+                      .attr("fill", "yellow")
+                      .attr("stroke", "orange")
+                      .attr("stroke-width", function(d) {
+                      return d/2;
+                  });
               }
             }
           txtFile.open("GET", file);
