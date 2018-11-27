@@ -34,63 +34,36 @@
               .append("p")
               .style("font-size", "15px")
               .style("font-weight", "normal")
-              .text("The bar chart visualizes the unemployment rate in the netherlands per province")
+              .text("The bar chart visualizes the unemployment rate in the netherlands per province (2018)")
 
             var file = "arbeidsdeelname.json";
-            var startYear = 2010;
-            var endYear = 2018;
             const WIDTH = 500;
             const HEIGHT = 500;
+            var year = "2018";
             var barPadding = 1;
             var provinces = [];
-            var yearsString = [];
-            var dataFull = [];
-            // var dataProvince = [];
+            var data = [];
             var counter = 0;
 
             // read local JSON file
             d3.json(file).then(function(dataset) {
-              console.log(dataset);
               provinces = Object.keys(dataset);
+
+              provinces.forEach( function(province) {
+                data.push(dataset[province][year]);
+              })
+
+              console.log(data);
               console.log(provinces);
-              // var values = Object.values(dataset);
-              // console.log(values);
-              for (var i = startYear; i <= endYear; i++) {
-                var dataYearly = [];
-                var year = i.toString();
-                yearsString.push(year);
-                provinces.forEach(function(province) {
-                  dataYearly.push(dataset[province][year]);
-                });
-                dataFull.push(dataYearly);
-              }
-              console.log(dataFull);
-              console.log(yearsString);
-              // for (var i = startYear; i <= endYear; i++) {
-              //   d3.select("body")
-              //     .data(dataFull[i - startYear])
-              //     .enter()
-              //     .append("p")
-              //     .style("font-size", "15px")
-              //     .style("font-weight", "normal")
-              //     .attr("class", function(d, j) {
-              //       return provinces[j - 1];
-              //     })
-              //     .attr("id", function(d, k) {
-              //       return provinces[k - 1];
-              //     })
-              //     .text(function(d, l) {
-              //       return provinces[l - 1] + i.toString();
-              //     });
-              // }
+
               var svg = d3.select("body")
                           .append("svg")
                           .attr("width", WIDTH)
                           .attr("height", HEIGHT);
 
-              console.log(dataFull[0]);
+              console.log(data);
               svg.selectAll("rect")
-                 .data(dataFull[0])
+                 .data(data)
                  .enter()
                  .append("rect")
                  .attr("class", "bar")
@@ -98,44 +71,34 @@
                    return provinces[i];
                  })
                  .attr("x", function(d, j) {
-                      return j * (WIDTH / dataFull[0].length);
+                      return j * (WIDTH / data.length);
                   })
                   .attr("y", function(d) {
                        return HEIGHT - d * 75;  //Height minus data value
                    })
-                 .attr("width", WIDTH / dataFull[0].length - barPadding)
+                 .attr("width", WIDTH / data.length - barPadding)
                  .attr("height", function(d) {
                       return d * 75;  // <-- Times four!
-                  })
-                // .attr("fill", function(d, k) {
-                //      return "rgb(0, 0, " + (d * 10) + ")";
-                //  });
+                  });
+
+
+                svg.selectAll("text")
+                   .data(data)
+                   .enter()
+                   .append("text")
+                   .attr("class", "labels")
+                   .text(function(d) {
+                     return d;
+                   })
+                   .attr("x", function(d, i) {
+                     return i * (WIDTH / data.length) + (WIDTH / data.length * 0.5 - barPadding);
+                   })
+                   .attr("y", function(d) {
+                     return HEIGHT - d * 75 + 14;
+                   })
               });
 
 
-          //       var svg = d3.select("body")
-          //       .append("svg")
-          //       .attr("width", WIDTH)
-          //       .attr("height", HEIGHT);
-          //
-          //       var rectangles = svg.selectAll("rect")
-          //                         .data(dataset[0])
-          //                         .enter()
-          //                         .append("rect");
-          //
-          //       rectangles.attr("x", function(d, i) {
-          //         return 20 * i;
-          //       })
-          //              .attr("y", function(d, i) {
-          //                return i * 5;
-          //              })
-          //              .attr("width", 30)
-          //              .attr("height", 20)
-          //             .attr("fill", "yellow")
-          //             .attr("stroke", "orange")
-          //             .attr("stroke-width", function(d) {
-          //             return d/2;
-          //         });
 
 
         </script>
