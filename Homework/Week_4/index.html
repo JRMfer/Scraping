@@ -14,6 +14,7 @@
               .text("Labour participation Netherlands");
 
             d3.select("body")
+              .append("p")
               .style("font-size", "25px")
               .style("font-weight", "bold")
               .text("Labour participation NL per province");
@@ -37,8 +38,11 @@
               .text("The bar chart visualizes the unemployment rate in the netherlands per province (2018)")
 
             var file = "arbeidsdeelname.json";
-            const WIDTH = 500;
-            const HEIGHT = 500;
+            const width = 1000;
+            const height = 500;
+            const space = 100;
+            const widthGraph = width - 2 * space;
+            const heightGraph = height - space;
             var year = "2018";
             var barPadding = 1;
             var provinces = [];
@@ -58,8 +62,15 @@
 
               var svg = d3.select("body")
                           .append("svg")
-                          .attr("width", WIDTH)
-                          .attr("height", HEIGHT);
+                          .attr("width", width)
+                          .attr("height", height);
+
+              var yScale = d3.scaleLinear()
+                             .domain([0, d3.max(data)])
+                             .range([heightGraph, space]);
+              var xScale = d3.scaleLinear()
+                             .domain([0, data.length])
+                             .range([space, width - space]);
 
               console.log(data);
               svg.selectAll("rect")
@@ -71,14 +82,17 @@
                    return provinces[i];
                  })
                  .attr("x", function(d, j) {
-                      return j * (WIDTH / data.length);
+                      return xScale(j);
                   })
                   .attr("y", function(d) {
-                       return HEIGHT - d * 75;  //Height minus data value
+                       return  yScale(d);// return height - d * 75;  //height minus data value
                    })
-                 .attr("width", WIDTH / data.length - barPadding)
+                   .attr("fill", function(d) {
+                       return "rgb(102, " + (d * 40) + ", 102)";
+                   })
+                 .attr("width", widthGraph / data.length - barPadding)
                  .attr("height", function(d) {
-                      return d * 75;  // <-- Times four!
+                      return heightGraph - yScale(d);  // <-- Times four!
                   });
 
 
@@ -91,11 +105,41 @@
                      return d;
                    })
                    .attr("x", function(d, i) {
-                     return i * (WIDTH / data.length) + (WIDTH / data.length * 0.5 - barPadding);
+                     return xScale(i) + 0.5 * widthGraph / data.length - barPadding;
                    })
                    .attr("y", function(d) {
-                     return HEIGHT - d * 75 + 14;
-                   })
+                     return yScale(d) + 14;
+                   });
+
+                var xAxisScale = d3.scaleBand()
+                                   .domain(provinces)
+                                   .range([space, width - space])
+                                   .paddingInner(0.05);
+
+                var xAxis = d3.axisBottom()
+                              .tickValues(provinces)
+                              .ticks(provinces.length)
+                              .scale(xAxisScale);
+
+                var yAxis = d3.axisLeft()
+                              .scale(yScale);
+
+                yAxis.tickFormat(d => d + "%");
+
+
+                svg.append("g")
+                   .attr("class", "axis")
+                   .attr("id", "xAxis")
+                   .attr("transform", "translate(0," + (heightGraph - barPadding) + ")")
+                   .call(xAxis)
+                   .style("text-anchor", "end")
+                   .selectAll("text")
+                   .attr("transform", "rotate(-65)");
+
+                svg.append("g")
+                   .attr("class", "axis")
+                   .attr("transform", "translate(" + space + ",0)")
+                   .call(yAxis);
               });
 
 
