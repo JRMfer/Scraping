@@ -33,6 +33,7 @@ def preprocessing(data):
     Preprocess data as necessary
     """
     data = remove_string(data, "Perioden", " (PV)")
+    data = remove_string(data, "Perioden", " ")
     data.rename(columns = {'2018 3e kwartaal':'2018'}, inplace = True)
     return data
 
@@ -48,6 +49,6 @@ if __name__ == "__main__":
 
     data = csv_reader(INPUT_CSV)
     data = preprocessing(data)
-    print(data)
+    print(data["Perioden"][1])
     make_json(data)
     # make_json(data)
