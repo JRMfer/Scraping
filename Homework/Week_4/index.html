@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <!-- <title>D3 Test</title> -->
+        <link href="styles.css" rel="stylesheet">
         <script src="https://d3js.org/d3.v5.min.js"></script>
     </head>
     <body>
@@ -13,23 +14,26 @@
               .text("Labour participation Netherlands");
 
             d3.select("body")
-              .style("font-size", "16px")
-              .style("text-dectoration", "bold")
+              .style("font-size", "25px")
+              .style("font-weight", "bold")
               .text("Labour participation NL per province");
 
             d3.select("body")
               .append("p")
-              .style("font size", "12px")
+              .style("font-size", "15px")
+              .style("font-weight", "normal")
               .text("Name: Julien Fer");
 
             d3.select("body")
               .append("p")
-              .style("font size", "12px")
+              .style("font-size", "15px")
+              .style("font-weight", "normal")
               .text("Studentnumber: 10649441");
 
             d3.select("body")
               .append("p")
-              .style("font size", "12px")
+              .style("font-size", "15px")
+              .style("font-weight", "normal")
               .text("The bar chart visualizes the unemployment rate in the netherlands per province")
 
             var file = "arbeidsdeelname.json";
@@ -37,72 +41,103 @@
             var endYear = 2018;
             const WIDTH = 500;
             const HEIGHT = 500;
-            var yearsInt = [];
+            var barPadding = 1;
+            var provinces = [];
             var yearsString = [];
-            var dataset = [];
+            var dataFull = [];
+            // var dataProvince = [];
             var counter = 0;
-            var txtFile =  new XMLHttpRequest();
-            txtFile.onreadystatechange = function(){
-              if (txtFile.readyState === 4 && txtFile.status == 200){
-                var data = JSON.parse(txtFile.responseText);
-                var provinces = Object.keys(data);
-                // console.log(provinces);
-                // console.log(data[provinces[0]]["2010"])
-                provinces.forEach( function(province){
-                  var dataUnemployment = [];
-                  for (var i = startYear; i <= endYear; i++){
-                    var year = i.toString();
-                    dataUnemployment.push(data[province][year]);
-                    // d3.select("body")
-                    //   .data(dataUnemployment[startYear - startYear])
-                    //   .enter()
-                    //   .append("p")
-                    //   .attr("class", province + year)
-                    //   .text(province + year);
-                  }
-                  dataset.push(dataUnemployment);
-                  // console.log(dataUnemployment);
-                  d3.select("body")
-                    .data(dataUnemployment)
-                    .enter()
-                    .append("p")
-                    .attr("class", province)
-                    .text(province);
+
+            // read local JSON file
+            d3.json(file).then(function(dataset) {
+              console.log(dataset);
+              provinces = Object.keys(dataset);
+              console.log(provinces);
+              // var values = Object.values(dataset);
+              // console.log(values);
+              for (var i = startYear; i <= endYear; i++) {
+                var dataYearly = [];
+                var year = i.toString();
+                yearsString.push(year);
+                provinces.forEach(function(province) {
+                  dataYearly.push(dataset[province][year]);
                 });
-                // d3.select("body")
-                //   .data(dataset)
-                //   .enter()
-                //   .append("p")
-                //   .text("dataset");
-                console.log(dataset);
-
-                var svg = d3.select("body")
-                .append("svg")
-                .attr("width", WIDTH)
-                .attr("height", HEIGHT);
-
-                var rectangles = svg.selectAll("rect")
-                                  .data(dataset[0])
-                                  .enter()
-                                  .append("rect");
-
-                rectangles.attr("x", function(d, i) {
-                  return 20 * i;
-                })
-                       .attr("y", function(d, i) {
-                         return i * 5;
-                       })
-                       .attr("width", 30)
-                       .attr("height", 20)
-                      .attr("fill", "yellow")
-                      .attr("stroke", "orange")
-                      .attr("stroke-width", function(d) {
-                      return d/2;
-                  });
+                dataFull.push(dataYearly);
               }
-            }
-          txtFile.open("GET", file);
-          txtFile.send();
+              console.log(dataFull);
+              console.log(yearsString);
+              // for (var i = startYear; i <= endYear; i++) {
+              //   d3.select("body")
+              //     .data(dataFull[i - startYear])
+              //     .enter()
+              //     .append("p")
+              //     .style("font-size", "15px")
+              //     .style("font-weight", "normal")
+              //     .attr("class", function(d, j) {
+              //       return provinces[j - 1];
+              //     })
+              //     .attr("id", function(d, k) {
+              //       return provinces[k - 1];
+              //     })
+              //     .text(function(d, l) {
+              //       return provinces[l - 1] + i.toString();
+              //     });
+              // }
+              var svg = d3.select("body")
+                          .append("svg")
+                          .attr("width", WIDTH)
+                          .attr("height", HEIGHT);
+
+              console.log(dataFull[0]);
+              svg.selectAll("rect")
+                 .data(dataFull[0])
+                 .enter()
+                 .append("rect")
+                 .attr("class", "bar")
+                 .attr("id", function(d, i) {
+                   return provinces[i];
+                 })
+                 .attr("x", function(d, j) {
+                      return j * (WIDTH / dataFull[0].length);
+                  })
+                  .attr("y", function(d) {
+                       return HEIGHT - d * 75;  //Height minus data value
+                   })
+                 .attr("width", WIDTH / dataFull[0].length - barPadding)
+                 .attr("height", function(d) {
+                      return d * 75;  // <-- Times four!
+                  })
+                // .attr("fill", function(d, k) {
+                //      return "rgb(0, 0, " + (d * 10) + ")";
+                //  });
+              });
+
+
+          //       var svg = d3.select("body")
+          //       .append("svg")
+          //       .attr("width", WIDTH)
+          //       .attr("height", HEIGHT);
+          //
+          //       var rectangles = svg.selectAll("rect")
+          //                         .data(dataset[0])
+          //                         .enter()
+          //                         .append("rect");
+          //
+          //       rectangles.attr("x", function(d, i) {
+          //         return 20 * i;
+          //       })
+          //              .attr("y", function(d, i) {
+          //                return i * 5;
+          //              })
+          //              .attr("width", 30)
+          //              .attr("height", 20)
+          //             .attr("fill", "yellow")
+          //             .attr("stroke", "orange")
+          //             .attr("stroke-width", function(d) {
+          //             return d/2;
+          //         });
+
+
         </script>
     </body>
 </html>

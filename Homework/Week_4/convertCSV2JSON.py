@@ -32,7 +32,7 @@ def preprocessing(data):
     """
     Preprocess data as necessary
     """
-    data = remove_string(data, "Perioden", "(PV)")
+    data = remove_string(data, "Perioden", " (PV)")
     data.rename(columns = {'2018 3e kwartaal':'2018'}, inplace = True)
     return data
 
