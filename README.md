@@ -1,19 +1,19 @@
-## DataProcessing
+# DataProcessing
 
 Github pages link: https://JRMfer.github.io/dataprocessing
 
-# Homework/Week_1: Moviescraper
+## Homework/Week_1: Moviescraper
 This assignment scrapes the top 50 movies from IMDB and plots a graph of the average rating per year.
 
-# Homework/Week_2: EDA
+## Homework/Week_2: EDA
 This assingment reads data of several countries from a csv file, makes a JSON file, preprocces it and makes several plots.
 
-# Homework/Week_3: Javascript
+## Homework/Week_3: Javascript
 This assignment converts a csv file to a JSON file and this is used to make a graph in a html template
 
 Github page: https://JRMfer.github.io/dataprocessing/Homework/Week_3/index.html
 
-# Homework/Week_4: D3 Bar chart
+## Homework/Week_4: D3 Bar chart
 This assignment converts a csv file to a JSON and this one is used to make a bar chart
 which is dynamically programmed and has some interactive features as change of color while hovering and many more
 
