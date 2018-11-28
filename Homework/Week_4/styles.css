@@ -1,3 +1,8 @@
+/* Name: Julien Fer
+Studentnumber: 10649441
+
+This is a stylesheet for a bar chart */
+
 .labels {
   font-family: sans-serif;
   font-size: 11px;
@@ -14,17 +19,35 @@
 }
 
 .axis text {
+  text-anchor: end;
   font-family: sans-serif;
   font-size: 11px;
   font-weight: normal;
 }
 
 .svg {
-  border-style: solid #f4f4f4;
-  border-width: 1px;
   background-color: #f4f4f4;
 }
 
 .tooltip {
+  position: absolute;
+  background: #f4f4f4;
+  padding: 5 15px;
+  border: 1px #333 solid;
+  border-radius: 5px;
+  opacity: 0;
   text-anchor: middle;
+}
+
+#titleGraph {
+  text-anchor: middle;
+  font-weight: bold;
+  text-decoration: underline;
+  font-size: 20px;
+}
+
+#titleAxis {
+  text-anchor: middle;
+  font-weight: bold;
+  font-size: 20px;
 }
