@@ -38,43 +38,33 @@
               .style("font-weight", "normal")
               .text("The bar chart visualizes the unemployment rate in the netherlands per province (2018)")
 
-            var file = "arbeidsdeelname.json";
-            const width = 1000;
-            const height = 500;
-            const space = 100;
-            const widthGraph = width - 2 * space;
-            const heightGraph = height - space;
-            var animateDuration = 700;
-            var animateDelay = 100;
-            var year = "2018";
-            var barPadding = 1;
             var provinces = [];
-            var data = [];
-            var counter = 0;
+            dimGraph = {"width": 1000, "height": 500, "space": 100,
+                        "widthGraph": 800, "heightGraph": 400, "animateDuration": 700,
+                        "animateDelay": 100, "year": "2018", "barPadding": 1,
+                        "data": []};
 
             // read local JSON file
-            d3.json(file).then(function(dataset) {
+            d3.json("arbeidsdeelname.json").then(function(dataset) {
               provinces = Object.keys(dataset);
+              dimGraph["provinces"] = provinces
 
-              provinces.forEach( function(province) {
-                data.push(dataset[province][year]);
+              dimGraph.provinces.forEach( function(province) {
+                dimGraph.data.push(dataset[province][dimGraph.year]);
               })
-
-              console.log(data);
-              console.log(provinces);
 
               var svg = d3.select("body")
                           .append("svg")
                           .attr("class", "svg")
-                          .attr("width", width)
-                          .attr("height", height);
+                          .attr("width", dimGraph.width)
+                          .attr("height", dimGraph.height);
 
               var yScale = d3.scaleLinear()
-                             .domain([0, d3.max(data)])
-                             .range([heightGraph, space]);
+                             .domain([0, d3.max(dimGraph.data)])
+                             .range([dimGraph.heightGraph, dimGraph.space]);
               var xScale = d3.scaleLinear()
-                             .domain([0, data.length])
-                             .range([space, width - space]);
+                             .domain([0, dimGraph.data.length])
+                             .range([dimGraph.space, dimGraph.width - dimGraph.space]);
 
               // source code for tooltip:
               // https://www.youtube.com/watch?v=5pNz_Dyf9_c&index=7&list=PLillGF-RfqbY8Vy_G5WxXwhZx4eXI6Oea
@@ -87,31 +77,30 @@
                             .style('border-radius','5px')
                             .style('opacity','0')
 
-              console.log(data);
               var myChart = svg.selectAll("rect")
-                 .data(data)
+                 .data(dimGraph.data)
                  .enter()
                  .append("rect")
                  .attr("class", "bar")
                  .attr("id", function(d, i) {
-                   return provinces[i];
+                   return dimGraph.provinces[i];
                  })
                  .attr("x", function(d, j) {
                       return xScale(j);
                   })
-                  .attr("y", heightGraph)
+                  .attr("y", dimGraph.eightGraph)
                    .attr("fill", function(d) {
                        return "rgb(102, " + (d * 40) + ", 102)";
                    })
-                 .attr("width", widthGraph / data.length - barPadding)
+                 .attr("width", dimGraph.widthGraph / dimGraph.data.length - dimGraph.barPadding)
                  .attr("height", 0)
                   .on('mouseover', function(d, k){
 					               tooltip.transition()
 						                   .style('opacity', 1)
 
 					               tooltip.html("Unemployment: " + d + "%")
-						                   .style('left', (xScale(k) + 0.5 * widthGraph / data.length - barPadding)+ 'px')
-						                   .style('top', (yScale(d) + 2 * space)+ 'px')
+						                   .style('left', (xScale(k) + 0.5 * dimGraph.widthGraph / dimGraph.data.length - dimGraph.barPadding)+ 'px')
+						                   .style('top', (yScale(d) + 2 * dimGraph.space)+ 'px')
 
             					d3.select(this).style('opacity', 0.5)
             				})
@@ -123,7 +112,7 @@
 
 
                 svg.selectAll("text")
-                   .data(data)
+                   .data(dimGraph.data)
                    .enter()
                    .append("text")
                    .attr("class", "labels")
@@ -131,20 +120,20 @@
                      return d;
                    })
                    .attr("x", function(d, i) {
-                     return xScale(i) + 0.5 * widthGraph / data.length - barPadding;
+                     return xScale(i) + 0.5 * dimGraph.widthGraph / dimGraph.data.length - dimGraph.barPadding;
                    })
                    .attr("y", function(d) {
                      return yScale(d) + 14;
                    });
 
                 var xAxisScale = d3.scaleBand()
-                                   .domain(provinces)
-                                   .range([space, width - space])
+                                   .domain(dimGraph.provinces)
+                                   .range([dimGraph.space, dimGraph.width - dimGraph.space])
                                    .paddingInner(0.05);
 
                 var xAxis = d3.axisBottom()
                               .tickValues(provinces)
-                              .ticks(provinces.length)
+                              .ticks(dimGraph.provinces.length)
                               .scale(xAxisScale);
 
                 var yAxis = d3.axisLeft()
@@ -158,7 +147,7 @@
                 svg.append("g")
                    .attr("class", "axis")
                    .attr("id", "xAxis")
-                   .attr("transform", "translate(0," + (heightGraph - barPadding) + ")")
+                   .attr("transform", "translate(0," + (dimGraph.heightGraph - dimGraph.barPadding) + ")")
                    .call(xAxis)
                    .style("text-anchor", "end")
                    .selectAll("text")
@@ -166,13 +155,13 @@
 
                 svg.append("g")
                    .attr("class", "axis")
-                   .attr("transform", "translate(" + space + ",0)")
+                   .attr("transform", "translate(" + dimGraph.space + ",0)")
                    .call(yAxis);
 
                 // create Title
                 svg.append("text")
-                   .attr("x", width / 2 )
-                   .attr("y", space / 2)
+                   .attr("x", dimGraph.width / 2 )
+                   .attr("y", dimGraph.space / 2)
                    .attr("id", "titleGraph")
                    .style("text-anchor", "middle")
                    .style("font-weight", "bold")
@@ -182,8 +171,8 @@
 
                 // create title y axis
                 svg.append("text")
-                   .attr("x", heightGraph / 2 - 2 * space - 240)
-                   .attr("y", widthGraph / 2 - 3.5 * space)
+                   .attr("x", dimGraph.heightGraph / 2 - 2 * dimGraph.space - 240)
+                   .attr("y", dimGraph.widthGraph / 2 - 3.5 * dimGraph.space)
                    .attr("transform", "rotate(-90)")
                    .attr("id", "titleXaxis")
                    .style("text-anchor", "middle")
@@ -193,8 +182,8 @@
 
                 // creat title x axis
                 svg.append("text")
-                   .attr("x", width / 2)
-                   .attr("y", heightGraph + space)
+                   .attr("x", dimGraph.width / 2)
+                   .attr("y", dimGraph.heightGraph + dimGraph.space)
                    .attr("id", "titleYaxis")
                    .style("text-anchor", "middle")
                    .style("font-weight", "bold")
@@ -203,14 +192,14 @@
 
                 myChart.transition()
                       .attr("height", function(d){
-                        return heightGraph - yScale(d);
+                        return dimGraph.heightGraph - yScale(d);
                       })
                       .attr("y", function(d, i){
                         return yScale(d);
                       })
-                      .duration(animateDuration)
+                      .duration(dimGraph.animateDuration)
                       .delay(function(d, j){
-                        return j * animateDelay;
+                        return j * dimGraph.animateDelay;
                       })
                       .ease(d3.easeElastic);
               });
