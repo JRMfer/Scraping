@@ -19,54 +19,12 @@
   font-weight: normal;
 }
 
-/* #Nederland {
-    fill: #f58231;
+.svg {
+  border-style: solid #f4f4f4;
+  border-width: 1px;
+  background-color: #f4f4f4;
 }
 
-#Groningen {
-    fill: #e6194B;
+.tooltip {
+  text-anchor: middle;
 }
-
-#Friesland {
-  fill: #469990;
-}
-
-#Drenthe {
-  fill: #ffe119;
-}
-
-#Overijssel {
-  fill: #bfef45;
-}
-
-#Flevoland {
-  fill: #3cb44b;
-}
-
-#Gelderland {
-  fill: #42d4f4;
-}
-
-#Utrecht {
-  fill: #808000;
-}
-
-#Noord-Holland {
-  fill: #f032e6;
-}
-
-#Zuid-Holland {
-  fill: #ff5050;
-}
-
-#Zeeland {
-  fill: #ccff33;
-}
-
-#Noord-Brabant {
-  fill: #999966;
-}
-
-#Limburg {
-  fill: #009933;
-} */
