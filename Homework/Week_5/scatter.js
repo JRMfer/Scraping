@@ -81,7 +81,7 @@ function transformResponse(data) {
     });
     // add dataArray to dataTotal
     dataTotal.push(dataArray);
-    console.log(dataArray);
+    // console.log(dataArray);
   }
   return dataTotal
 }
@@ -89,6 +89,17 @@ function transformResponse(data) {
 var womenInScience = "http://stats.oecd.org/SDMX-JSON/data/MSTI_PUB/TH_WRXRS.FRA+DEU+KOR+NLD+PRT+GBR/all?startTime=2007&endTime=2015"
 var consConf = "http://stats.oecd.org/SDMX-JSON/data/HH_DASH/FRA+DEU+KOR+NLD+PRT+GBR.COCONF.A/all?startTime=2007&endTime=2015"
 
+const dimGraph = {
+  "width": 1000,
+  "height": 500
+};
+
+const margins = {
+  "left": 50,
+  "right": 50,
+  "top": 50,
+  "bottom": 50
+}
 
 window.onload = function() {
   var requests = [d3.json(womenInScience), d3.json(consConf)];
@@ -96,7 +107,8 @@ window.onload = function() {
   title("Scatter plot");
 
   Promise.all(requests).then(function(response) {
-    transformResponse(response);
+    let data = transformResponse(response);
+    console.log(data);
   }).catch(function(e){
       throw(e);
   });
