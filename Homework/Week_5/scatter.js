@@ -12,8 +12,15 @@ function title(txt) {
     .text(txt);
 }
 
-function transformResponse(data) {
+function addParagraph(txt, id) {
+  d3.select("body")
+    .append("p")
+    .attr("class", "paragraph")
+    .attr("id", id)
+    .text(txt);
+}
 
+function transformResponse(data) {
   let dataTotal = [];
 
   // acces data property of the response
@@ -86,6 +93,81 @@ function transformResponse(data) {
   return dataTotal
 }
 
+function preproccesing (dataset, countries) {
+  // console.log(dataset);
+
+  // let mstiVar = {
+  //   "2007": [],
+  //   "2008": [],
+  //   "2009": [],
+  //   "2010": [],
+  //   "2011": [],
+  //   "2012": [],
+  //   "2013": [],
+  //   "2014": [],
+  //   "2015": []
+  // };
+  //
+  // let consumer = {
+  //   "2007": [],
+  //   "2008": [],
+  //   "2009": [],
+  //   "2010": [],
+  //   "2011": [],
+  //   "2012": [],
+  //   "2013": [],
+  //   "2014": [],
+  //   "2015": []
+  // };
+
+  dataComplete = {
+    "2007": {"France": [], "Germany": [], "Korea": [], "Netherlands": [], "Portugal": [], "United Kingdom": []},
+    "2008": {"France": [], "Germany": [], "Korea": [], "Netherlands": [], "Portugal": [], "United Kingdom": []},
+    "2009": {"France": [], "Germany": [], "Korea": [], "Netherlands": [], "Portugal": [], "United Kingdom": []},
+    "2010": {"France": [], "Germany": [], "Korea": [], "Netherlands": [], "Portugal": [], "United Kingdom": []},
+    "2011": {"France": [], "Germany": [], "Korea": [], "Netherlands": [], "Portugal": [], "United Kingdom": []},
+    "2012": {"France": [], "Germany": [], "Korea": [], "Netherlands": [], "Portugal": [], "United Kingdom": []},
+    "2013": {"France": [], "Germany": [], "Korea": [], "Netherlands": [], "Portugal": [], "United Kingdom": []},
+    "2014": {"France": [], "Germany": [], "Korea": [], "Netherlands": [], "Portugal": [], "United Kingdom": []},
+    "2015": {"France": [], "Germany": [], "Korea": [], "Netherlands": [], "Portugal": [], "United Kingdom": []}
+  }
+
+  // create array to keep count of all dataPoints MSTI variables
+  // let allDatapoints = [];
+  let index = 0;
+  let country = "";
+
+  dataset.forEach( function(variable, i) {
+    variable.forEach( function(data){
+      if ("MSTI Variables" in data) {
+        if (data.time == "2007") {
+          index++;
+          // let tempObj = {};
+          country = countries[index - 1];
+        }
+        // let tempObj = {};
+        dataComplete[data.time][country].push(data.datapoint);
+        // tempObj[country] = data.datapoint;
+        // mstiVar[data["time"]].push(tempObj);
+      } else if (data.Indicator == "Consumer confidence")  {
+        // let tempObj = {};
+        dataComplete[data.time][data.Country].push(data.datapoint);
+        // tempObj[data.Country] = data.datapoint;
+        // consumer[data.time].push(tempObj);
+      }
+    })
+    // console.log(mstiVar);
+    // console.log(consumer);
+  });
+  // years.forEach( function(year) {
+  //
+  // });
+  console.log(dataComplete);
+  return dataComplete
+  // dataset[0] = mstiVar;
+  // dataset[1] = consumer;
+}
+
 function createSvg(dimGraph, string) {
   return d3.select("body")
           .append("svg")
@@ -94,60 +176,18 @@ function createSvg(dimGraph, string) {
           .attr("height", dimGraph.height);
 }
 
-function preproccesing (dataset) {
-  console.log(dataset);
-  let mstiVar = {
-    "2007": [],
-    "2008": [],
-    "2009": [],
-    "2010": [],
-    "2011": [],
-    "2012": [],
-    "2013": [],
-    "2014": [],
-    "2015": []
-  };
-
-  let consumer = {
-    "2007": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
-    "2008": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
-    "2009": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
-    "2010": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
-    "2011": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
-    "2012": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
-    "2013": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
-    "2014": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
-    "2015": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0}
-  };
-  let country = [];
-  let year = [];
-  let consumerConfedince = [];
-  dataset.forEach( function(variable, i) {
-    // console.log(Object.keys(variable[i]));
-    // console.log(Object.entries(variable[i]))
-    variable.forEach( function(data){
-      if ("MSTI Variables" in data) {
-        mstiVar[data["time"]].push(data.datapoint);
-      } // else {
-      //   let year = data.time;
-      //   let country = data.Country;
-      //   consumer.year.country = data.datapoint
-      //   // consumer.data["time"].consumer.data["Country"] = data.datapoint;
-      //   console.log(data.datapoint);
-      // }
-      // console.log(("MSTI Variables" in data))
-    })
-    console.log(mstiVar);
-    // console.log(consumer);
-  });
+function scaleLinear(dimGraph, margins) {
+  return d3.scaleLinear()
+          .domain([0, d3.max(dimGraph.data)])
+          .range([dimGraph.height - (margins.top + margins.bottom), (margins.top + margins.bottom)]);
 }
 
 var womenInScience = "http://stats.oecd.org/SDMX-JSON/data/MSTI_PUB/TH_WRXRS.FRA+DEU+KOR+NLD+PRT+GBR/all?startTime=2007&endTime=2015"
 var consConf = "http://stats.oecd.org/SDMX-JSON/data/HH_DASH/FRA+DEU+KOR+NLD+PRT+GBR.COCONF.A/all?startTime=2007&endTime=2015"
 
-const dimGraph = {
+let dimGraph = {
   "width": 1000,
-  "height": 500
+  "height": 500,
 };
 
 const margins = {
@@ -157,26 +197,43 @@ const margins = {
   "bottom": 50
 }
 
+const countries = ["France", "Germany", "Korea", "Netherlands", "Portugal", "United Kingdom"];
+const years = ["2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"];
+
 window.onload = function() {
   var requests = [d3.json(womenInScience), d3.json(consConf)];
   // console.log(requests);
   title("Scatter plot");
+  addParagraph("Correlation between percentage female resaerchers and consumer confidence", "titlePage");
+  addParagraph("Name: Julien Fer", "name");
+  addParagraph("Studentnumber: 10649441", "studentnumber");
+  addParagraph("Link to dataset will come here", "link");
+
 
   Promise.all(requests).then(function(response) {
     let dataset = transformResponse(response);
-    preproccesing(dataset);
+    // console.log(dataset);
+    dataset = preproccesing(dataset, countries);
+    dimGraph["data"] = dataset;
+    // dimGraph.data.push(dataset);
+    console.log(dimGraph.data);
+    console.log(Object.values(dimGraph.data["2007"]));
     let svg = createSvg(dimGraph, "svg");
-   //  svg.selectAll("circle")
-   // .data(dataset)
-   // .enter()
-   // .append("circle")
-   // .attr("cx", function(d) {
-   //      return d[0];
-   // })
-   // .attr("cy", function(d) {
-   //      return d[1];
-   // })
-   // .attr("r", 5);
+    svg.selectAll("circle")
+   .data(Object.values(dimGraph.data["2007"]))
+   .enter()
+   // .text(console.log(dimGraph.data[0]))
+   .text( function(d) {
+     console.log(d);
+   })
+   .append("circle")
+   .attr("cx", function(d) {
+     return d[0];
+   })
+   .attr("cy", function(d) {
+     return d[1];
+   })
+   .attr("r", 5);
     // console.log(dataset);
   }).catch(function(e){
       throw(e);
