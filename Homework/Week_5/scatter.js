@@ -176,18 +176,51 @@ function createSvg(dimGraph, string) {
           .attr("height", dimGraph.height);
 }
 
-function scaleLinear(dimGraph, margins) {
-  return d3.scaleLinear()
-          .domain([0, d3.max(dimGraph.data)])
-          .range([dimGraph.height - (margins.top + margins.bottom), (margins.top + margins.bottom)]);
+function findMaxObject(dimGraph, years, countries) {
+  dataVar1 = [];
+  dataVar2 = [];
+  maxValue = [];
+  years.forEach( function(year) {
+    countries.forEach( function(country) {
+      if (dimGraph.data[year][country].length === 2) {
+        dataVar1.push(dimGraph.data[year][country][0]);
+        dataVar2.push(dimGraph.data[year][country][1]);
+      } else {
+        dataVar2.push(dimGraph.data[year][country][0]);
+      }
+    })
+  })
+  maxValue.push(d3.max(dataVar1));
+  maxValue.push(d3.max(dataVar2));
+  return maxValue;
 }
+
+function xScaleLinear(dimGraph, margins, domain) {
+  return d3.scaleLinear()
+          .domain(domain)
+          .range([margins.left + dimGraph.padding, dimGraph.width - margins.right - dimGraph.padding])
+}
+
+function yScaleLinear(dimGraph, margins, domain) {
+  return d3.scaleLinear()
+          .domain(domain)
+          .range([dimGraph.height - margins.bottom - dimGraph.padding, margins.top + dimGraph.padding]);
+}
+
+function rScaleLinear(domain, range) {
+  return d3.scaleLinear()
+          .domain(domain)
+          .range(range);
+}
+
 
 var womenInScience = "http://stats.oecd.org/SDMX-JSON/data/MSTI_PUB/TH_WRXRS.FRA+DEU+KOR+NLD+PRT+GBR/all?startTime=2007&endTime=2015"
 var consConf = "http://stats.oecd.org/SDMX-JSON/data/HH_DASH/FRA+DEU+KOR+NLD+PRT+GBR.COCONF.A/all?startTime=2007&endTime=2015"
 
 let dimGraph = {
-  "width": 1000,
+  "width": 500,
   "height": 500,
+  "padding": 20
 };
 
 const margins = {
@@ -204,7 +237,7 @@ window.onload = function() {
   var requests = [d3.json(womenInScience), d3.json(consConf)];
   // console.log(requests);
   title("Scatter plot");
-  addParagraph("Correlation between percentage female resaerchers and consumer confidence", "titlePage");
+  addParagraph("Correlation between percentage female researchers and consumer confidence", "titlePage");
   addParagraph("Name: Julien Fer", "name");
   addParagraph("Studentnumber: 10649441", "studentnumber");
   addParagraph("Link to dataset will come here", "link");
@@ -218,6 +251,11 @@ window.onload = function() {
     // dimGraph.data.push(dataset);
     console.log(dimGraph.data);
     console.log(Object.values(dimGraph.data["2007"]));
+    let maxValues = findMaxObject(dimGraph, years, countries);
+    console.log(maxValues);
+    let xScale = xScaleLinear(dimGraph, margins, [0, maxValues[0]]);
+    let yScale = yScaleLinear(dimGraph, margins, [0, maxValues[1]]);
+    let rScale = rScaleLinear([0, maxValue[1]], [2, 5]);
     let svg = createSvg(dimGraph, "svg");
     svg.selectAll("circle")
    .data(Object.values(dimGraph.data["2007"]))
@@ -228,12 +266,14 @@ window.onload = function() {
    })
    .append("circle")
    .attr("cx", function(d) {
-     return d[0];
+     return xScale(d[0]);
    })
    .attr("cy", function(d) {
-     return d[1];
+     return yScale(d[1]);
    })
-   .attr("r", 5);
+   .attr("r", function(d) {
+     return rScale(d[1]);
+   })
     // console.log(dataset);
   }).catch(function(e){
       throw(e);
