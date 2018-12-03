@@ -86,6 +86,62 @@ function transformResponse(data) {
   return dataTotal
 }
 
+function createSvg(dimGraph, string) {
+  return d3.select("body")
+          .append("svg")
+          .attr("class", string)
+          .attr("width", dimGraph.width)
+          .attr("height", dimGraph.height);
+}
+
+function preproccesing (dataset) {
+  console.log(dataset);
+  let mstiVar = {
+    "2007": [],
+    "2008": [],
+    "2009": [],
+    "2010": [],
+    "2011": [],
+    "2012": [],
+    "2013": [],
+    "2014": [],
+    "2015": []
+  };
+
+  let consumer = {
+    "2007": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
+    "2008": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
+    "2009": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
+    "2010": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
+    "2011": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
+    "2012": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
+    "2013": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
+    "2014": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0},
+    "2015": {"France": 0, "Netherlands": 0, "Portugal": 0, "Germany": 0, "United Kingdom": 0, "Korea": 0}
+  };
+  let country = [];
+  let year = [];
+  let consumerConfedince = [];
+  dataset.forEach( function(variable, i) {
+    // console.log(Object.keys(variable[i]));
+    // console.log(Object.entries(variable[i]))
+    variable.forEach( function(data){
+      if ("MSTI Variables" in data) {
+        mstiVar[data["time"]].push(data.datapoint);
+      } // else {
+      //   let year = data.time;
+      //   let country = data.Country;
+      //   consumer.year.country = data.datapoint
+      //   // consumer.data["time"].consumer.data["Country"] = data.datapoint;
+      //   console.log(data.datapoint);
+      // }
+      // console.log(("MSTI Variables" in data))
+    })
+    console.log(mstiVar);
+    // console.log(consumer);
+  });
+}
+
 var womenInScience = "http://stats.oecd.org/SDMX-JSON/data/MSTI_PUB/TH_WRXRS.FRA+DEU+KOR+NLD+PRT+GBR/all?startTime=2007&endTime=2015"
 var consConf = "http://stats.oecd.org/SDMX-JSON/data/HH_DASH/FRA+DEU+KOR+NLD+PRT+GBR.COCONF.A/all?startTime=2007&endTime=2015"
 
@@ -107,8 +163,21 @@ window.onload = function() {
   title("Scatter plot");
 
   Promise.all(requests).then(function(response) {
-    let data = transformResponse(response);
-    console.log(data);
+    let dataset = transformResponse(response);
+    preproccesing(dataset);
+    let svg = createSvg(dimGraph, "svg");
+   //  svg.selectAll("circle")
+   // .data(dataset)
+   // .enter()
+   // .append("circle")
+   // .attr("cx", function(d) {
+   //      return d[0];
+   // })
+   // .attr("cy", function(d) {
+   //      return d[1];
+   // })
+   // .attr("r", 5);
+    // console.log(dataset);
   }).catch(function(e){
       throw(e);
   });
