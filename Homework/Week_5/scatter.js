@@ -20,6 +20,16 @@ function addParagraph(txt, id) {
     .text(txt);
 }
 
+function addLink(txt, url, classLink) {
+  d3.select("body")
+    .append("p")
+    .attr("class", classLink)
+    .txt(txt)
+    .on("click", function() {
+      window.open(url);
+    });
+}
+
 function transformResponse(data) {
   let dataTotal = [];
 
@@ -195,16 +205,35 @@ function findMaxObject(dimGraph, years, countries) {
   return maxValue;
 }
 
+function findMinObject(dimGraph, years, countries) {
+  dataVar1 = [];
+  dataVar2 = [];
+  minValue = [];
+  years.forEach( function(year) {
+    countries.forEach( function(country) {
+      if (dimGraph.data[year][country].length === 2) {
+        dataVar1.push(dimGraph.data[year][country][0]);
+        dataVar2.push(dimGraph.data[year][country][1]);
+      } else {
+        dataVar2.push(dimGraph.data[year][country][0]);
+      }
+    })
+  })
+  minValue.push(d3.min(dataVar1));
+  minValue.push(d3.min(dataVar2));
+  return minValue;
+}
+
 function xScaleLinear(dimGraph, margins, domain) {
   return d3.scaleLinear()
           .domain(domain)
-          .range([margins.left + dimGraph.padding, dimGraph.width - margins.right - dimGraph.padding])
+          .range([margins.left, dimGraph.width - margins.right])
 }
 
 function yScaleLinear(dimGraph, margins, domain) {
   return d3.scaleLinear()
           .domain(domain)
-          .range([dimGraph.height - margins.bottom - dimGraph.padding, margins.top + dimGraph.padding]);
+          .range([dimGraph.height - margins.bottom , margins.top]);
 }
 
 function rScaleLinear(domain, range) {
@@ -217,18 +246,18 @@ function rScaleLinear(domain, range) {
 var womenInScience = "http://stats.oecd.org/SDMX-JSON/data/MSTI_PUB/TH_WRXRS.FRA+DEU+KOR+NLD+PRT+GBR/all?startTime=2007&endTime=2015"
 var consConf = "http://stats.oecd.org/SDMX-JSON/data/HH_DASH/FRA+DEU+KOR+NLD+PRT+GBR.COCONF.A/all?startTime=2007&endTime=2015"
 
-let dimGraph = {
-  "width": 500,
-  "height": 500,
-  "padding": 20
-};
-
 const margins = {
-  "left": 50,
-  "right": 50,
+  "left": 100,
+  "right": 300,
   "top": 50,
   "bottom": 50
-}
+};
+
+const dimGraph = {
+  "width": 1000,
+  "height": 400,
+  "padding": 1
+};
 
 const countries = ["France", "Germany", "Korea", "Netherlands", "Portugal", "United Kingdom"];
 const years = ["2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"];
@@ -241,6 +270,7 @@ window.onload = function() {
   addParagraph("Name: Julien Fer", "name");
   addParagraph("Studentnumber: 10649441", "studentnumber");
   addParagraph("Link to dataset will come here", "link");
+  // addLink("womenInScience", "http://stats.oecd.org/SDMX-JSON/data/MSTI_PUB/TH_WRXRS.FRA+DEU+KOR+NLD+PRT+GBR/all?startTime=2007&endTime=2015", "link")
 
 
   Promise.all(requests).then(function(response) {
@@ -252,28 +282,107 @@ window.onload = function() {
     console.log(dimGraph.data);
     console.log(Object.values(dimGraph.data["2007"]));
     let maxValues = findMaxObject(dimGraph, years, countries);
+    let minValues = findMinObject(dimGraph, years, countries);
+    console.log(minValues);
     console.log(maxValues);
-    let xScale = xScaleLinear(dimGraph, margins, [0, maxValues[0]]);
-    let yScale = yScaleLinear(dimGraph, margins, [0, maxValues[1]]);
-    let rScale = rScaleLinear([0, maxValue[1]], [2, 5]);
+    let xScale = xScaleLinear(dimGraph, margins, [0, minValues[0] + maxValues[0]]);
+    let yScale = yScaleLinear(dimGraph, margins, [minValues[1] - dimGraph.padding, maxValues[1] + dimGraph.padding]);
+    let rScale = rScaleLinear([minValues[1] - dimGraph.padding, maxValues[1] + dimGraph.padding], [1, 5]);
+    let xAxis = d3.axisBottom()
+                  .scale(xScale)
+                  .tickFormat(d => d + '%');
+    let yAxis = d3.axisLeft()
+                  .scale(yScale);
+
     let svg = createSvg(dimGraph, "svg");
+
+    svg.append("g")
+      .attr("class", "axis")
+      .attr("id", "xAxis")
+      .attr("transform", "translate(0," + (dimGraph.height - margins.bottom) + ")")
+      .call(xAxis)
+
+    svg.append("g")
+      .attr("class", "axis")
+      .attr("transform", "translate(" + margins.left  + ",0)")
+      .call(yAxis);
+
     svg.selectAll("circle")
-   .data(Object.values(dimGraph.data["2007"]))
-   .enter()
-   // .text(console.log(dimGraph.data[0]))
-   .text( function(d) {
-     console.log(d);
-   })
-   .append("circle")
-   .attr("cx", function(d) {
-     return xScale(d[0]);
-   })
-   .attr("cy", function(d) {
-     return yScale(d[1]);
-   })
-   .attr("r", function(d) {
-     return rScale(d[1]);
-   })
+       .data(Object.values(dimGraph.data["2007"]))
+       .enter()
+       // .text(console.log(dimGraph.data[0]))
+       .text( function(d) {
+         console.log(d);
+       })
+       .append("circle")
+       .attr("cx", function(d) {
+         return xScale(d[0]);
+       })
+       .attr("cy", function(d) {
+         return yScale(d[1]);
+       })
+       .attr("r", function(d) {
+         return rScale(d[1]);
+       })
+       .attr("fill", function(d, i) {
+         if (i === 0) {
+           return "#e41a1c";
+         } else if (i === 1) {
+           return "#377eb8";
+         } else if (i === 2) {
+           return "#4daf4a";
+         } else if (i === 3) {
+           return "#984ea3";
+         } else if (i === 4) {
+           return "#ff7f00";
+         } else {
+           return "#ffff33";
+         }
+       })
+       var legend = svg.append("g")
+                      .attr("class", "legend")
+                      .attr("x", dimGraph.width - margins.right + 50)
+                      .attr("y", margins.top + 50)
+                      .attr("height", dimGraph.height - margins.top - margins.bottom)
+                      .attr("width", margins.right - dimGraph.padding);
+
+      legend.selectAll("rect")
+            .data(Object.keys(dimGraph.data["2007"]))
+            .enter()
+            .append("rect")
+            .attr("x", dimGraph.width - margins.right + 50)
+            .attr("y", function(d, i) {
+              return margins.top + 50 + (i * 30);
+            })
+            .attr("width", 20)
+            .attr("height", 20)
+            .style("fill", function(d, j) {
+              if (j === 0) {
+                return "#e41a1c";
+              } else if (j === 1) {
+                return "#377eb8";
+              } else if (j === 2) {
+                return "#4daf4a";
+              } else if (j === 3) {
+                return "#984ea3";
+              } else if (j === 4) {
+                return "#ff7f00";
+              } else {
+                return "#ffff33";
+              }
+            })
+    legend.selectAll("text")
+          .data(Object.keys(dimGraph.data["2007"]))
+          .enter()
+          .append("text")
+          .attr("class", "labelsLegend")
+          .text( function(d) {
+            return d;
+          })
+          .attr("x", dimGraph.width - margins.right + 75)
+          .attr("y", function(d, i) {
+            return margins.top + 65 + (i * 30);
+          })
     // console.log(dataset);
   }).catch(function(e){
       throw(e);
