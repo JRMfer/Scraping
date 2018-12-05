@@ -352,6 +352,9 @@ function drawGraph(svg, dimGraph, year) {
 }
 
 function addLegend(svg, year) {
+  // function to draw legend for the graph
+
+  // append area for legend to svg
   var legend = svg.append("g")
     .attr("class", "legend")
     .attr("x", dimGraph.width - margins.right + 50)
@@ -359,6 +362,7 @@ function addLegend(svg, year) {
     .attr("height", dimGraph.height - margins.top - margins.bottom)
     .attr("width", margins.right - dimGraph.padding);
 
+  // set border for legend
   var borderPath = svg.append("rect")
     .attr("x", dimLegend.x)
     .attr("y", dimLegend.y)
@@ -366,6 +370,7 @@ function addLegend(svg, year) {
     .attr("width", dimLegend.width)
     .attr("id", "borderLegend")
 
+  // add circles for legend with the color correspoding to the countries color
   legend.selectAll("circle")
     .data(Object.keys(dimGraph.data[year]))
     .enter()
@@ -379,6 +384,7 @@ function addLegend(svg, year) {
       return dimGraph.colors[j];
     });
 
+  // add countries name to the legend
   legend.selectAll("text")
     .data(Object.keys(dimGraph.data[year]))
     .enter()
@@ -394,16 +400,24 @@ function addLegend(svg, year) {
 }
 
 function updateGraph() {
+  // this function updates the plot depending on the choice of the user
+
+  // gets value chosen by user
   let selectYear = d3.select(".dropdown")
     .property("value")
 
+  // removes datapoints old scatterplot
   d3.select(".svg").selectAll("circle").remove();
+
+  // draws datapoints selected scatter plot
   drawGraph(d3.select(".svg"), dimGraph, selectYear);
 }
 
+// global variables links datasets
 var womenInScience = "https://stats.oecd.org/SDMX-JSON/data/MSTI_PUB/TH_WRXRS.FRA+DEU+KOR+NLD+PRT+GBR/all?startTime=2007&endTime=2015"
 var consConf = "https://stats.oecd.org/SDMX-JSON/data/HH_DASH/FRA+DEU+KOR+NLD+PRT+GBR.COCONF.A/all?startTime=2007&endTime=2015"
 
+// global constant margins
 const margins = {
   "left": 100,
   "right": 300,
@@ -411,6 +425,7 @@ const margins = {
   "bottom": 100
 };
 
+// global constant dimension graph
 const dimGraph = {
   "width": 1000,
   "height": 700,
@@ -420,6 +435,7 @@ const dimGraph = {
   "years": ["2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"]
 };
 
+// global constant dimensions legend
 const dimLegend = {
   "x": dimGraph.width - margins.right + 50,
   "y": (dimGraph.height - margins.top - margins.bottom) / 2 - 70,
@@ -430,8 +446,13 @@ const dimLegend = {
   "padding": 5
 }
 
+// this function assures that the following is executed when the page is load
 window.onload = function() {
+
+  // request datasets
   var requests = [d3.json(womenInScience), d3.json(consConf)];
+
+  // add title, a few paragraphs and links to datasets to the body
   title("Scatter plot");
   addParagraph("Correlation between percentage female researchers and consumer confidence", "titlePage");
   addParagraph("Name: Julien Fer", "name");
@@ -440,10 +461,16 @@ window.onload = function() {
   addLink("Dataset: Consumer confidence", consConf);
   addParagraph("This scatterplot shows the relation between consumer confidence and the percentage of female researchers in 6 countries", "explanation");
 
+  // waits till requests are fullfilled
   Promise.all(requests).then(function(response) {
+
+    // preprocceses dataset and add to dimension graph
     let dataset = transformResponse(response);
     dataset = preproccesing(dataset, dimGraph);
     dimGraph["data"] = dataset;
+
+    // make dropdown with as options the different years and include the update
+    // function, so when option is clicked this function will be called.
     let dropdown = d3.select("body")
       .append("select")
       .attr("class", "dropdown")
@@ -457,6 +484,8 @@ window.onload = function() {
         return d;
       });
 
+    // find max and min values of both variables and
+    // setup scale functions for x,y values and the radius
     let maxValues = findMaxObject(dimGraph);
     let minValues = findMinObject(dimGraph);
     let xScale = xScaleLinear(dimGraph, margins, [0, minValues[0] + maxValues[0]]);
@@ -464,18 +493,24 @@ window.onload = function() {
                                                   maxValues[1] + dimGraph.padding]);
     let rScale = rScaleLinear([minValues[1] - dimGraph.padding, maxValues[1] +
                                dimGraph.padding], [10, 30]);
+
+    // add scale functions to dimeonsions graph
     dimGraph["xScale"] = xScale;
     dimGraph["yScale"] = yScale;
     dimGraph["rScale"] = rScale;
 
+    // creat x and y axis, as the scale functions are determined by the min and
+    // max values it will be correct for all the possible graphs.
     let xAxis = d3.axisBottom()
       .scale(xScale)
       .tickFormat(d => d + '%');
     let yAxis = d3.axisLeft()
       .scale(yScale);
 
+    // create SVG
     let svg = createSvg(dimGraph, "svg");
 
+    // append x and y axis to SVG at the appropiate place
     svg.append("g")
       .attr("class", "axis")
       .attr("id", "xAxis")
@@ -488,7 +523,7 @@ window.onload = function() {
       .attr("transform", "translate(" + margins.left + ",0)")
       .call(yAxis);
 
-
+    // initialize first scatter plot to be shown
     let myScatter = drawGraph(svg, dimGraph, "2007")
 
     // create title
