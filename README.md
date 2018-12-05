@@ -18,3 +18,8 @@ This assignment converts a csv file to a JSON and this one is used to make a bar
 which is dynamically programmed and has some interactive features as change of color while hovering and many more
 
 Github page: https://jrmfer.github.io/dataprocessing/Homework/Week_4/index.html
+
+## Homework/Week_5: D3 Scatterplot
+This assignment retrieves a dataset trough the use of an API, preprocces the data and evuantually draws a scatterplot.
+
+Github page: https://jrmfer.github.io/dataprocessing/Homework/Week_5/scatter.html
