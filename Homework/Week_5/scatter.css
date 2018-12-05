@@ -3,6 +3,83 @@
 
    This template contains the stylsheet for scatter.html */
 
- .svg {
-   background-color: darkgrey;
- }
+
+#titlePage {
+  font-size: 25px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+#name, #studentnumber, #link {
+  font-family: sans-serif;
+  font-size: 15px;
+  font-weight: normal;
+}
+
+#link {
+  font-family: sans-serif;
+  font-size: 15px;
+  font-weight: normal;
+  color: blue;
+  text-decoration: underline;
+}
+
+#explanation {
+  font-family: sans-serif;
+  font-size: 15px;
+  font-weight: normal;
+}
+
+#titleGraph {
+  font-size: 25px;
+  font-weight: bold;
+  font-family: sans-serif;
+  text-decoration: underline;
+}
+
+.axis path, line {
+  fill: none;
+  stroke: black;
+  stroke-width: 1px;
+  font-weight: normal;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  text-anchor: end;
+  font-family: sans-serif;
+  font-size: 11px;
+  font-weight: normal;
+}
+
+#titleAxis {
+  font-family: sans-serif;
+  text-anchor: middle;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.labelsLegend {
+  font-size: 20px;
+  font-family: sans-serif;
+}
+
+#borderLegend {
+  stroke: black;
+  fill: none;
+  stroke-width: 1px;
+}
+
+.svg {
+  background-color: darkgrey;
+}
+
+.tooltip {
+  position: absolute;
+  background: white;
+  padding: 5 15px;
+  border: 1px #333 solid;
+  border-radius: 5px;
+  opacity: 0;
+  text-anchor: middle;
+}
