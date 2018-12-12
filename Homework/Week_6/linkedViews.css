@@ -1,5 +1,17 @@
 #map {
-  background-color: #efefef;
+  background: white;
+}
+
+.country {
+  fill: #cccccc;
+  stroke: #333333;
+  stroke-width: 0.5;
+  opacity: 0.8;
+}
+
+.selected {
+  stroke: #333333;
+  stroke-width: 3;
 }
 
 .names {

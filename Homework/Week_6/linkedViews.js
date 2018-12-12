@@ -72,9 +72,22 @@ window.onload = function() {
   var tip = d3.tip()
             .attr('class', 'd3-tip')
             .offset([-10, 0])
-            .html(function(d) {
-              return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span>" + "<strong>Population: </strong><span class='details'>" + format(d.population) +"</span>";
-            });
+            .html(function(d, spending) {
+              let shortName = d.properties.iso_a3;
+              if (spending[shortName]) {
+                let keys = Object.keys(spending[shortName]);
+                let total = 0
+                keys.forEach( function(key) {
+                  total += spending[shortName][key];
+                  console.log(spending[shortName][key]);
+                  console.log(total);
+                })
+                return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span>" + "<strong>Government spending: </strong><span class='details'>" + total +"</span>";
+                }
+                else {
+                  return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span>" + "<strong>Government spending: </strong><span class='details'>" + undefined +"</span>";
+                }
+              });
 
   var svg = d3.select("body")
               .append("svg")
@@ -83,6 +96,8 @@ window.onload = function() {
               .attr("id", "map")
               .append("g")
               .attr("transform", "translate(" + margins.left + "," + margins.top  + ")");
+
+  svg.call(tip);
 
   /*
     Read in eu.topojson
@@ -96,7 +111,7 @@ window.onload = function() {
     let data = response[1];
     console.log(topology);
     console.log(data);
-    ready(0, topology)
+    ready(0, topology, data)
   }).catch( function(e) {
     throw (e);
   });
@@ -107,7 +122,7 @@ window.onload = function() {
     and zoom in a certain amount (scale)
   */
   let projection = d3.geoMercator()
-    .translate([dimMap.width / 7, dimMap.height * 1.55])
+    .translate([dimMap.width / 2, dimMap.height * 1.55])
     .scale(425)
 
   /*
@@ -117,7 +132,7 @@ window.onload = function() {
   let path = d3.geoPath()
     .projection(projection)
 
-  function ready(error, data) {
+  function ready(error, data, spending) {
     /*
       topjson.feature converts
       our RAW geo data into USEABLE geo data
@@ -138,5 +153,13 @@ window.onload = function() {
       .enter().append("path")
       .attr("class", "country")
       .attr("d", path)
+      .on("mouseover", function(d) {
+        d3.select(this).classed("selected", true);
+        tip.show(d, spending);
+      })
+      .on("mouseout", function(d) {
+        d3.select(this).classed("selected", false);
+        tip.hide(d, spending);
+      })
   }
 }
