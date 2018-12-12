@@ -66,7 +66,7 @@ window.onload = function() {
   addLink("Dataset: Central government spending", governmentSpending);
   addParagraph("This page shows the central goverment spending (2014) of countries in the European Union", "explanation");
 
-  var format = d3.format(",");
+  var format = d3.format(".1f");
 
   // Set tooltips
   var tip = d3.tip()
@@ -79,10 +79,8 @@ window.onload = function() {
                 let total = 0
                 keys.forEach( function(key) {
                   total += spending[shortName][key];
-                  console.log(spending[shortName][key]);
-                  console.log(total);
                 })
-                return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span>" + "<strong>Government spending: </strong><span class='details'>" + total +"</span>";
+                return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span>" + "<strong>Government spending: </strong><span class='details'>" + format(total) + "%" +"</span>";
                 }
                 else {
                   return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span>" + "<strong>Government spending: </strong><span class='details'>" + undefined +"</span>";
