@@ -63,7 +63,7 @@ var marginsBar = {
 }
 
 var dimBar =  {
-  "width": 850,
+  "width": 650,
   "height": 550,
   "animateDuration": 700,
   "animateDelay": 75,
@@ -283,7 +283,7 @@ let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(1
       .domain([0, keys.length])
       .range([margins.left, dim.width - margins.right]);
 
-    var tooltip = d3.select(area).append("div")
+    var tooltip = d3.select("#area2").append("div")
       .attr("class", "tooltip");
 
     // draw graph
@@ -300,19 +300,17 @@ let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(1
         return xScale(i);
       })
       .attr("y", function(d) {
-        console.log(dim.height - yScale(dim.data[country][d]));
         return yScale(dim.data[country][d]);
       })
       // adjust color bars according to their value
-      .attr("fill", function(d) {
-        return "rgb(102, " + (dim.data[country][d] * 10) + ", 102)";
+      .attr("fill", function(d) {"rgb(0,90,50)"
+        return "rgb(0, " + (153 - dim.data[country][d] * 2) + "," + (84 - dim.data[country][d] * 2) +")";
       })
       // set width and height of the bars
       .attr("width", (dim.width - margins.left - margins.right) / keys.length -
         dim.barPadding)
       .attr("height", function(d) {
-        console.log(yScale(dim.data[country][d]));
-        return dim.height - yScale(dim.data[country][d]);
+        return (dim.height - margins.bottom) - yScale(dim.data[country][d]);
       })
       // setup mouseover hover effect
       .on('mouseover', function(d, j) {
@@ -320,10 +318,8 @@ let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(1
           .style('opacity', 1)
         // shows value while hovering over bar
         tooltip.html(d + ": " + dim.data[country][d] + "%")
-          .style('left', (xScale(j) + 0.5 * (dim.width - margins.left - margins.right) /
-              5 - dim.barPadding) +
-            'px')
-          .style('top', (yScale(d) + margins.top + margins.bottom) + 'px')
+          .style('left', (xScale(j)) + 'px')
+          .style('top',  yScale(dim.data[country][d]) + 'px')
 
         d3.select(this).style('opacity', 0.5)
       })
