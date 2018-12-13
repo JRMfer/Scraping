@@ -1,9 +1,9 @@
-#map {
-  background: white;
+#svg {
+  background: #ADD8E6;
 }
 
 .country {
-  fill: #cccccc;
+  /* fill: #cccccc; */
   stroke: #333333;
   stroke-width: 0.5;
   opacity: 0.8;
@@ -12,6 +12,7 @@
 .selected {
   stroke: #333333;
   stroke-width: 3;
+  opacity: 1;
 }
 
 .names {

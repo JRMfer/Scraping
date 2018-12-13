@@ -43,7 +43,7 @@ var worldCountries = "http://bl.ocks.org/micahstubbs/raw/8e15870eb432a21f0bc4d3d
 var euCountries = "https://gist.githubusercontent.com/milafrerichs/69035da4707ea51886eb/raw/4cb1783c2904f52cbb8a258ee96031f9054d155b/eu.topojson"
 
 // global constant margins
-var margins = {
+var marginsMap = {
   "left": 100,
   "right": 100,
   "top": 0,
@@ -51,9 +51,24 @@ var margins = {
 }
 
 var dimMap = {
-  "width": 1000 - margins.right - margins.left,
-  "height": 500 - margins.top - margins.bottom
+  "width": 850 - marginsMap.right - marginsMap.left,
+  "height": 550 - marginsMap.top - marginsMap.bottom
 }
+
+var marginsBar = {
+  "left": 100,
+  "right": 100,
+  "top": 100,
+  "bottom": 100
+}
+
+var dimBar =  {
+  "width": 850 - marginsBar.left - marginsBar.right,
+  "height": 550 - marginsBar.top - marginsBar.bottom,
+  "animateDuration": 700,
+  "animateDelay": 75,
+  "barPadding": 1
+};
 
 // this function assures that the following is executed when the page is load
 window.onload = function() {
@@ -71,7 +86,7 @@ window.onload = function() {
   // Set tooltips
   var tip = d3.tip()
             .attr('class', 'd3-tip')
-            .offset([-10, 0])
+            .offset([100, 100])
             .html(function(d, spending) {
               let shortName = d.properties.iso_a3;
               if (spending[shortName]) {
@@ -87,15 +102,22 @@ window.onload = function() {
                 }
               });
 
-  var svg = d3.select("body")
+  var svg = d3.select("#area1")
               .append("svg")
-              .attr("height", dimMap.height + margins.top + margins.bottom)
+              .attr("height", dimMap.height + marginsMap.top + marginsMap.bottom)
               .attr("width", dimMap.width)
-              .attr("id", "map")
+              .attr("id", "svg")
               .append("g")
-              .attr("transform", "translate(" + margins.left + "," + margins.top  + ")");
+              .attr("transform", "translate(" + marginsMap.left + "," + marginsMap.top  + ")");
 
   svg.call(tip);
+
+let scores = [10, 20, 30, 40, 50, 60, 70, 80];
+let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(161,217,155)", "rgb(116,196,118)", "rgb(65,171,93)","rgb(35,139,69)","rgb(0,90,50)"];
+
+  let color = d3.scaleThreshold()
+    .domain(scores)
+    .range(colors);
 
   /*
     Read in eu.topojson
@@ -107,9 +129,11 @@ window.onload = function() {
   Promise.all(requests).then( function(response) {
     let topology = response[0];
     let data = response[1];
+    dimBar["data"] = data;
     console.log(topology);
-    console.log(data);
-    ready(0, topology, data)
+    console.log(dimBar["data"]);
+    ready(0, topology, data);
+    drawBarChart("#area2", marginsBar, dimBar, "barChart", "OECD");
   }).catch( function(e) {
     throw (e);
   });
@@ -120,8 +144,8 @@ window.onload = function() {
     and zoom in a certain amount (scale)
   */
   let projection = d3.geoMercator()
-    .translate([dimMap.width / 2, dimMap.height * 1.55])
-    .scale(425)
+    .translate([dimMap.width / 5, dimMap.height * 1.4])
+    .scale(415)
 
   /*
     create a path (geoPath)
@@ -140,6 +164,7 @@ window.onload = function() {
 
     var countries = topojson.feature(data, data.objects.europe).features
     console.log(countries);
+    console.log(spending);
 
 
     /*
@@ -151,6 +176,20 @@ window.onload = function() {
       .enter().append("path")
       .attr("class", "country")
       .attr("d", path)
+      .attr("fill", function(d){
+        let shortName = d.properties.iso_a3;
+        if (spending[shortName]) {
+          let keys = Object.keys(spending[shortName]);
+          let total = 0
+          keys.forEach( function(key) {
+            total += spending[shortName][key];
+          })
+          return color(total);
+          }
+          else {
+            return "rgb(255, 255, 255)";
+          }
+      })
       .on("mouseover", function(d) {
         d3.select(this).classed("selected", true);
         tip.show(d, spending);
@@ -159,5 +198,118 @@ window.onload = function() {
         d3.select(this).classed("selected", false);
         tip.hide(d, spending);
       })
+      .on("click", function(d) {
+        console.log("Hello world!");
+      })
+
+      var legend = svg.selectAll(".legend")
+          .data(scores)
+          .enter().append('g')
+          .attr("class", "legend")
+          .attr("transform", function (d, i) {
+          {
+              return "translate(-75," + i * 20 + ")";
+          }
+      })
+
+      legend.append('rect')
+          .attr("x", 0)
+          .attr("y", 250)
+          .attr("width", 20)
+          .attr("height", 20)
+          .style("fill", function (d, i) {
+          return color(d - 1);
+      })
+
+      legend.append('text')
+          .attr("x", 30)
+          .attr("y", 265)
+      //.attr("dy", ".35em")
+      .text(function (d, i) {
+          return "< " + d + "%";
+      })
+          .attr("class", "textselected")
+          .style("text-anchor", "start")
+          .style("font-size", 15)
+  }
+
+  function findMaxObject(data) {
+    let keys = Object.keys(data);
+    let maxValue = 0;
+    keys.forEach( function(key) {
+      if (data[key] > maxValue){
+        maxValue = data[key];
+      }
+    })
+    return maxValue;
+  }
+
+  function drawBarChart(area, margins, dim, id, country) {
+    // set up svg element
+    var svg = d3.select(area)
+      .append("svg")
+      .attr("class", "svg")
+      .attr("id", id)
+      .attr("width", dim.width + margins.left + margins.right)
+      .attr("height", dim.height + margins.top + margins.bottom);
+
+    // set yScale graph
+    var yScale = d3.scaleLinear()
+      .domain([0, findMaxObject(dim.data[country])])
+      .range([dim.height - margins.bottom, margins.top]);
+
+    // set xScale graph
+    var xScale = d3.scaleLinear()
+      .domain([0, 5])
+      .range([margins.left, dim.width - margins.right]);
+
+    var tooltip = d3.select(area).append("div")
+      .attr("class", "tooltip");
+
+    // draw graph
+    var myChart = svg.selectAll("rect")
+      .data(Object.keys(dim.data[country]))
+      .enter()
+      .append("rect")
+      .attr("class", "bar")
+      .attr("id", function(d) {
+        return d;
+      })
+      // set bars at the right coordinates
+      .attr("x", function(d, i) {
+        return xScale(i);
+      })
+      .attr("y", function(d) {
+        return yScale(0);
+      })
+      // adjust color bars according to their value
+      .attr("fill", function(d) {
+        return "rgb(102, " + (d * 40) + ", 102)";
+      })
+      // set width and height of the bars
+      .attr("width", (dim.width - margins.left - margins.right) / 5 -
+        dim.barPadding)
+      .attr("height", function(d) {
+        return yScale(dim.data[country][d]);
+      })
+      // setup mouseover hover effect
+      .on('mouseover', function(d, j) {
+        tooltip.transition()
+          .style('opacity', 1)
+        // shows value while hovering over bar
+        tooltip.html("Unemployment: " + d + "%")
+          .style('left', (xScale(j) + 0.5 * (dim.width - margins.left - margins.right) /
+              5 - dim.barPadding) +
+            'px')
+          .style('top', (yScale(d) + margins.top + margins.bottom) + 'px')
+
+        d3.select(this).style('opacity', 0.5)
+      })
+      // set mouseout effects
+      .on('mouseout', function(d) {
+        tooltip.transition()
+          .style('opacity', 0)
+        d3.select(this).style('opacity', 1)
+      });
   }
 }
