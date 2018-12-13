@@ -63,8 +63,8 @@ var marginsBar = {
 }
 
 var dimBar =  {
-  "width": 850 - marginsBar.left - marginsBar.right,
-  "height": 550 - marginsBar.top - marginsBar.bottom,
+  "width": 850,
+  "height": 550,
   "animateDuration": 700,
   "animateDelay": 75,
   "barPadding": 1
@@ -244,23 +244,43 @@ let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(1
     return maxValue;
   }
 
+  function findMinObject(data) {
+    let keys = Object.keys(data);
+    let minValue = 0;
+    keys.forEach( function(key) {
+      if (data[key] < minValue){
+        minValue = data[key];
+      }
+    })
+    if (minValue >= 0) {
+      return 0;
+    }
+    else {
+      return minValue;
+    }
+  }
+
   function drawBarChart(area, margins, dim, id, country) {
     // set up svg element
     var svg = d3.select(area)
       .append("svg")
       .attr("class", "svg")
       .attr("id", id)
-      .attr("width", dim.width + margins.left + margins.right)
-      .attr("height", dim.height + margins.top + margins.bottom);
+      .attr("width", dim.width)
+      .attr("height", dim.height);
 
     // set yScale graph
     var yScale = d3.scaleLinear()
       .domain([0, findMaxObject(dim.data[country])])
-      .range([dim.height - margins.bottom, margins.top]);
+      .range([dim.height - margins.top, margins.bottom]);
+
+    console.log(yScale(0));
+    console.log(yScale(findMaxObject(dim.data[country])));
+    keys = Object.keys(dim.data[country]);
 
     // set xScale graph
     var xScale = d3.scaleLinear()
-      .domain([0, 5])
+      .domain([0, keys.length])
       .range([margins.left, dim.width - margins.right]);
 
     var tooltip = d3.select(area).append("div")
@@ -280,24 +300,26 @@ let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(1
         return xScale(i);
       })
       .attr("y", function(d) {
-        return yScale(0);
+        console.log(dim.height - yScale(dim.data[country][d]));
+        return yScale(dim.data[country][d]);
       })
       // adjust color bars according to their value
       .attr("fill", function(d) {
-        return "rgb(102, " + (d * 40) + ", 102)";
+        return "rgb(102, " + (dim.data[country][d] * 10) + ", 102)";
       })
       // set width and height of the bars
-      .attr("width", (dim.width - margins.left - margins.right) / 5 -
+      .attr("width", (dim.width - margins.left - margins.right) / keys.length -
         dim.barPadding)
       .attr("height", function(d) {
-        return yScale(dim.data[country][d]);
+        console.log(yScale(dim.data[country][d]));
+        return dim.height - yScale(dim.data[country][d]);
       })
       // setup mouseover hover effect
       .on('mouseover', function(d, j) {
         tooltip.transition()
           .style('opacity', 1)
         // shows value while hovering over bar
-        tooltip.html("Unemployment: " + d + "%")
+        tooltip.html(d + ": " + dim.data[country][d] + "%")
           .style('left', (xScale(j) + 0.5 * (dim.width - margins.left - margins.right) /
               5 - dim.barPadding) +
             'px')
