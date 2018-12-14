@@ -106,7 +106,8 @@ window.onload = function() {
               .append("svg")
               .attr("height", dimMap.height + marginsMap.top + marginsMap.bottom)
               .attr("width", dimMap.width)
-              .attr("id", "svg")
+              .attr("class", "svg")
+              .attr("id", "map")
               .append("g")
               .attr("transform", "translate(" + marginsMap.left + "," + marginsMap.top  + ")");
 
@@ -199,7 +200,8 @@ let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(1
         tip.hide(d, spending);
       })
       .on("click", function(d) {
-        console.log("Hello world!");
+        console.log(d.properties.iso_a3);
+        return updateGraph(dimBar, d.properties.iso_a3, marginsBar)
       })
 
       var legend = svg.selectAll(".legend")
@@ -260,6 +262,8 @@ let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(1
     }
   }
 
+
+
   function drawBarChart(area, margins, dim, id, country) {
     // set up svg element
     var svg = d3.select(area)
@@ -283,8 +287,14 @@ let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(1
       .domain([0, keys.length])
       .range([margins.left, dim.width - margins.right]);
 
-    var tooltip = d3.select("#area2").append("div")
-      .attr("class", "tooltip");
+    // Set tooltips
+    var tip = d3.tip()
+              .attr('class', "d3-tip")
+              .offset([0, 0])
+              .html(function(d, country) {
+                  return "<strong>" + d + ": " + "</strong><span class='details'>" + dim.data[country][d] + '%' + "<br></span>";
+                });
+    svg.call(tip);
 
     // draw graph
     var myChart = svg.selectAll("rect")
@@ -299,9 +309,7 @@ let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(1
       .attr("x", function(d, i) {
         return xScale(i);
       })
-      .attr("y", function(d) {
-        return yScale(dim.data[country][d]);
-      })
+      .attr("y", dim.height - margins.top)
       // adjust color bars according to their value
       .attr("fill", function(d) {"rgb(0,90,50)"
         return "rgb(0, " + (153 - dim.data[country][d] * 2) + "," + (84 - dim.data[country][d] * 2) +")";
@@ -309,25 +317,94 @@ let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(1
       // set width and height of the bars
       .attr("width", (dim.width - margins.left - margins.right) / keys.length -
         dim.barPadding)
-      .attr("height", function(d) {
-        return (dim.height - margins.bottom) - yScale(dim.data[country][d]);
+      .attr("height", 0)
+      .on("mouseover", function(d) {
+        d3.select(this).classed("selected", true);
+        tip.show(d, country);
       })
-      // setup mouseover hover effect
-      .on('mouseover', function(d, j) {
-        tooltip.transition()
-          .style('opacity', 1)
-        // shows value while hovering over bar
-        tooltip.html(d + ": " + dim.data[country][d] + "%")
-          .style('left', (xScale(j)) + 'px')
-          .style('top',  yScale(dim.data[country][d]) + 'px')
-
-        d3.select(this).style('opacity', 0.5)
-      })
-      // set mouseout effects
-      .on('mouseout', function(d) {
-        tooltip.transition()
-          .style('opacity', 0)
-        d3.select(this).style('opacity', 1)
+      .on("mouseout", function(d) {
+        d3.select(this).classed("selected", false);
+        tip.hide(d, country);
       });
+
+      // let the bars appear animated.
+      myChart.transition()
+        .attr("height", function(d) {
+          return dim.height - margins.top - yScale(dim.data[country][d]);
+        })
+        .attr("y", function(d, i) {
+          return yScale(dim.data[country][d]);
+        })
+        .duration(dim.animateDuration)
+        .delay(function(d, j) {
+          return j * dim.animateDelay;
+        })
+        .ease(d3.easeElastic);
+
+    // set scale for x axis with strings
+    var xAxisScale = d3.scaleBand()
+      .domain(keys)
+      .range([margins.left, dim.width - margins.right]);
+
+    // make x axis
+    var xAxis = d3.axisBottom()
+      .tickValues(keys)
+      .scale(xAxisScale);
+
+    svg.append("g")
+      .attr("class", "axis")
+      .attr("id", "xAxis")
+      .attr("transform", "translate(0," + (dim.height -margins.top
+                                            ) + ")")
+      .call(xAxis)
+      .selectAll("text")
+      .attr("transform", "rotate(-65)");
+
+    // make y axis
+    var yAxis = d3.axisLeft()
+      .ticks(5)
+      .scale(yScale);
+
+    // set yaxis at the appropriate place
+    svg.append("g")
+      .attr("class", "axis")
+      .attr("transform", "translate(" + margins.left + ",0)")
+      .call(yAxis);
+
+    // create Title
+    svg.append("text")
+      .attr("x", dim.width / 2)
+      .attr("y", margins.top / 2)
+      .attr("id", "titleGraph")
+      .text(function(d) {
+        return "Central goverment spending (" + country + ") % of total on 5 categories"
+      });
+
+    // create title y axis
+    svg.append("text")
+      .attr("x", - (dim.width - margins.left - margins.right) / 1.75)
+      .attr("y", (dim.height - margins.top - margins.bottom) / 6)
+      .attr("transform", "rotate(-90)")
+      .attr("id", "titleAxis")
+      .text("Percentage");
+
+    // creat title x axis
+    svg.append("text")
+      .attr("x", (dim.width - margins.left / 2) / 2)
+      .attr("y", dim.height - margins.bottom / 5)
+      .attr("id", "titleAxis")
+      .text("Categories");
+  }
+
+  function updateGraph(dim, country, margins) {
+    // removes datapoints old barChart
+    if (dim.data[country]) {
+      d3.select("#barChart").remove();
+      console.log(dim);
+      console.log(country);
+      console.log(margins);
+
+      return drawBarChart("#area2", margins, dim, "barChart", country);
+    }
   }
 }
