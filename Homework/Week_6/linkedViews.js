@@ -75,11 +75,21 @@ window.onload = function() {
 
   // add title, a few paragraphs and links to datasets to the body
   title("Government spending 2014");
-  addParagraph("Correlation between percentage female researchers and consumer confidence", "titlePage");
   addParagraph("Name: Julien Fer", "name");
   addParagraph("Studentnumber: 10649441", "studentnumber");
   addLink("Dataset: Central government spending", governmentSpending);
-  addParagraph("This page shows the central goverment spending (2014) of countries in the European Union", "explanation");
+  addParagraph("This page shows the central goverment spending in (2014) for countries in the OECD. In the map of Europe one sees ,while hovering over a country, the sum of government spending on 5 categorires as a percentage on the total goverment spending. When you click on the country the barchart will show the percentage of spending in the following 5 categories: ", "explanation");
+  var names = ["Economic Affairs (ECOAFF)", "Education (EDU)", "Health (Health)", "Housing and community amenities (HOUCOMM)", "Social protection (SOCPROT)"];
+
+	var ul = d3.select('#explanation').append('ul');
+
+	ul.selectAll('li')
+	.data(names)
+	.enter()
+	.append('li')
+	.html(function(d) {
+    return d;
+  });
 
   var format = d3.format(".1f");
 
@@ -356,6 +366,9 @@ let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(1
       .attr("id", "xAxis")
       .attr("transform", "translate(0," + (dim.height -margins.top
                                             ) + ")")
+      .transition()
+      .duration(dim.animateDuration)
+      .ease(d3.easeLinear)
       .call(xAxis)
       .selectAll("text")
       .attr("transform", "rotate(-65)");
@@ -369,6 +382,9 @@ let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(1
     svg.append("g")
       .attr("class", "axis")
       .attr("transform", "translate(" + margins.left + ",0)")
+      .transition()
+      .duration(dim.animateDuration)
+      .ease(d3.easeLinear)
       .call(yAxis);
 
     // create Title
