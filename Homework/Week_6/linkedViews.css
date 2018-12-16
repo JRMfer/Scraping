@@ -1,35 +1,41 @@
+/* Name: Julien Fer
+   Studentnumber: 10649441
+
+   This template contains the stylsheet for linkedViews.html */
+
+/* set background div */
 div {
   background: #ADD8E6;
 }
 
-.container {
-  float: left;
-}
-
+/* center headers and set style */
 h1, h2 {
   text-align: center;
   color: black;
   font-family: "avenir next", Arial, sans-serif;
 }
 
+/* set style for header exp and align to the left */
 #exp {
   text-align: left;
   color: black;
   font-family: "avenir next", Arial, sans-serif;
 }
 
+/* set style paths datmap */
 .country {
-  /* fill: #cccccc; */
   stroke: #333333;
   stroke-width: 0.5;
   opacity: 0.8;
 }
 
+/* set style text legend datamap */
 .textselected {
   color: black;
   font-family: "avenir next", Arial, sans-serif;
 }
 
+/* set style paths country when hovering */
 .selected {
   stroke: #333333;
   stroke-width: 3;
@@ -42,6 +48,7 @@ h1, h2 {
   stroke-linejoin: round;
 }
 
+/* set underline and color blue for links in paragraph */
 #link {
   color: blue;
   text-decoration: underline;
@@ -106,14 +113,11 @@ h1, h2 {
   left: 100%;
 }
 
-/*    text{
-  pointer-events:none;
-}*/
-
 .details{
   color:white;
 }
 
+/* set stroke axis with crispEdges and set style*/
 .axis path, line {
   fill: none;
   stroke: black;
@@ -122,6 +126,7 @@ h1, h2 {
   shape-rendering: crispEdges;
 }
 
+/* set text axis to end at edges and set style*/
 .axis text {
   text-anchor: end;
   font-family: "avenir next", Arial, sans-serif;
@@ -129,21 +134,22 @@ h1, h2 {
   font-weight: normal;
 }
 
+/* set style title barchart */
 #titleGraph {
   text-anchor: middle;
-  font-weight: bold;
   text-decoration: underline;
   font-size: 20px;
   font-family: "avenir next", Arial, sans-serif;
 }
 
+/* set style title axis barchart */
 #titleAxis {
   text-anchor: middle;
-  font-weight: bold;
   font-size: 20px;
   font-family: "avenir next", Arial, sans-serif;
 }
 
+/* set style paragraph */
 p {
   color: black;
   font-family: "avenir next", Arial, sans-serif;
