@@ -1,4 +1,4 @@
-body {
+div {
   background: #ADD8E6;
 }
 
@@ -12,11 +12,22 @@ h1, h2 {
   font-family: "avenir next", Arial, sans-serif;
 }
 
+#exp {
+  text-align: left;
+  color: black;
+  font-family: "avenir next", Arial, sans-serif;
+}
+
 .country {
   /* fill: #cccccc; */
   stroke: #333333;
   stroke-width: 0.5;
   opacity: 0.8;
+}
+
+.textselected {
+  color: black;
+  font-family: "avenir next", Arial, sans-serif;
 }
 
 .selected {
@@ -29,6 +40,12 @@ h1, h2 {
   fill: none;
   stroke: #fff;
   stroke-linejoin: round;
+}
+
+#link {
+  color: blue;
+  text-decoration: underline;
+  font-family: "avenir next", Arial, sans-serif;
 }
 
 /* Tooltip CSS */
@@ -124,5 +141,10 @@ h1, h2 {
   text-anchor: middle;
   font-weight: bold;
   font-size: 20px;
+  font-family: "avenir next", Arial, sans-serif;
+}
+
+p {
+  color: black;
   font-family: "avenir next", Arial, sans-serif;
 }

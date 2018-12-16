@@ -9,17 +9,32 @@
 
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="linkedViews.css" rel="stylesheet">
   <script src="http://d3js.org/topojson.v1.min.js"></script>
   <script src="https://d3js.org/d3.v5.min.js"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <body>
   <script src="d3-tip.js"></script>
   <script src="linkedViews.js"></script>
-  <h1>Central goverment spending OECD (2014)</h1>
-  <div class="container" id="area1"> <h2>By Country</h2></div>
-  <div class="container" id="area2"><h2>By Category</h2></div>
+  <!-- <h1>Central goverment spending OECD (2014)</h1> -->
+  <div class="row">
+    <h1>Central goverment spending OECD (2014)</h1>
+    <div class="col-sm-6", id="area1"><h2>By Country</h2></div>
+    <div class="col-sm-6", id="area2"><h2>By Category</h2></div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12" id="area3"><h2 id="exp">Explanation</h2></div>
+  </div>
 </body>
 
 </html>
