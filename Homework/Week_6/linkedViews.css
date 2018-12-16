@@ -6,9 +6,11 @@ body {
   float: left;
 }
 
-/* .svg {
-  background: #ADD8E6;
-} */
+h1, h2 {
+  text-align: center;
+  color: black;
+  font-family: "avenir next", Arial, sans-serif;
+}
 
 .country {
   /* fill: #cccccc; */
@@ -105,7 +107,7 @@ body {
 
 .axis text {
   text-anchor: end;
-  font-family: sans-serif;
+  font-family: "avenir next", Arial, sans-serif;
   font-size: 11px;
   font-weight: normal;
 }
@@ -115,10 +117,12 @@ body {
   font-weight: bold;
   text-decoration: underline;
   font-size: 20px;
+  font-family: "avenir next", Arial, sans-serif;
 }
 
 #titleAxis {
   text-anchor: middle;
   font-weight: bold;
   font-size: 20px;
+  font-family: "avenir next", Arial, sans-serif;
 }

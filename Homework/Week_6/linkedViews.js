@@ -198,7 +198,7 @@ let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(1
           return color(total);
           }
           else {
-            return "rgb(255, 255, 255)";
+            return "rgb(0, 0, 0)";
           }
       })
       .on("mouseover", function(d) {
