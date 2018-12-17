@@ -38,7 +38,7 @@ function addLink(txt, url) {
 }
 
 var governmentSpending = "https://data.oecd.org/gga/central-government-spending.htm"
-var spendingGovernment =  "Government_spending_2014.json"
+var spendingGovernment = "Government_spending_2014.json"
 var worldCountries = "http://bl.ocks.org/micahstubbs/raw/8e15870eb432a21f0bc4d3d527b2d14f/a45e8709648cafbbf01c78c76dfa53e31087e713/world_countries.json"
 var euCountries = "https://gist.githubusercontent.com/milafrerichs/69035da4707ea51886eb/raw/4cb1783c2904f52cbb8a258ee96031f9054d155b/eu.topojson"
 
@@ -62,7 +62,7 @@ var marginsBar = {
   "bottom": 100
 };
 
-var dimBar =  {
+var dimBar = {
   "width": 650,
   "height": 550,
   "animateDuration": 700,
@@ -77,37 +77,36 @@ window.onload = function() {
 
   // Set tooltips for datamap
   var tip = d3.tip()
-            .attr('class', 'd3-tip')
-            .offset([100, 100])
-            .html(function(d, spending) {
-              let shortName = d.properties.iso_a3;
-              if (spending[shortName]) {
-                let keys = Object.keys(spending[shortName]);
-                let total = 0
-                keys.forEach( function(key) {
-                  total += spending[shortName][key];
-                })
-                return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span>" + "<strong>Government spending: </strong><span class='details'>" + format(total) + "%" +"</span>";
-                }
-                else {
-                  return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span>" + "<strong>Government spending: </strong><span class='details'>" + undefined +"</span>";
-                }
-              });
+    .attr('class', 'd3-tip')
+    .offset([100, 100])
+    .html(function(d, spending) {
+      let shortName = d.properties.iso_a3;
+      if (spending[shortName]) {
+        let keys = Object.keys(spending[shortName]);
+        let total = 0
+        keys.forEach(function(key) {
+          total += spending[shortName][key];
+        })
+        return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span>" + "<strong>Government spending: </strong><span class='details'>" + format(total) + "%" + "</span>";
+      } else {
+        return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span>" + "<strong>Government spending: </strong><span class='details'>" + undefined + "</span>";
+      }
+    });
 
   // set svg for datamap
   var svg = d3.select("#area1")
-              .append("svg")
-              .attr("height", dimMap.height + marginsMap.top + marginsMap.bottom)
-              .attr("width", dimMap.width)
-              .attr("class", "svg")
-              .attr("id", "map")
-              .append("g")
-              .attr("transform", "translate(" + marginsMap.left + "," + marginsMap.top  + ")");
+    .append("svg")
+    .attr("height", dimMap.height + marginsMap.top + marginsMap.bottom)
+    .attr("width", dimMap.width)
+    .attr("class", "svg")
+    .attr("id", "map")
+    .append("g")
+    .attr("transform", "translate(" + marginsMap.left + "," + marginsMap.top + ")");
   svg.call(tip);
 
   // set scale for colors in datamap with threshold every 10%
   let scores = [10, 20, 30, 40, 50, 60, 70, 80];
-  let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(161,217,155)", "rgb(116,196,118)", "rgb(65,171,93)","rgb(35,139,69)","rgb(0,90,50)"];
+  let colors = ["rgb(247,252,245)", "rgb(229,245,224)", "rgb(199,233,192)", "rgb(161,217,155)", "rgb(116,196,118)", "rgb(65,171,93)", "rgb(35,139,69)", "rgb(0,90,50)"];
 
   let color = d3.scaleThreshold()
     .domain(scores)
@@ -120,7 +119,7 @@ window.onload = function() {
 
   var requests = [d3.json(euCountries), d3.json(spendingGovernment)]
 
-  Promise.all(requests).then( function(response) {
+  Promise.all(requests).then(function(response) {
     // gather data
     let topology = response[0];
     let data = response[1];
@@ -139,18 +138,18 @@ window.onload = function() {
     var ul = d3.select('#explanation').append('ul');
 
     ul.selectAll('li')
-    .data(names)
-    .enter()
-    .append('li')
-    .html(function(d) {
-      return d;
-    });
+      .data(names)
+      .enter()
+      .append('li')
+      .html(function(d) {
+        return d;
+      });
 
     // add name, studentnumber and link to dataset
     addParagraph("Name: Julien Fer", "name");
     addParagraph("Studentnumber: 10649441", "studentnumber");
     addLink("Dataset: Central government spending", governmentSpending);
-  }).catch( function(e) {
+  }).catch(function(e) {
     throw (e);
   });
 
@@ -187,21 +186,20 @@ window.onload = function() {
       .attr("class", "country")
       .attr("d", path)
       // fill color country according the scaled threshold array for colors
-      .attr("fill", function(d){
+      .attr("fill", function(d) {
         let shortName = d.properties.iso_a3;
 
         // checks if country contains data, if not fill country with color grey
         if (spending[shortName]) {
           let keys = Object.keys(spending[shortName]);
           let total = 0
-          keys.forEach( function(key) {
+          keys.forEach(function(key) {
             total += spending[shortName][key];
           })
           return color(total);
-          }
-          else {
-            return "rgb(64, 64, 64)";
-          }
+        } else {
+          return "rgb(64, 64, 64)";
+        }
       })
       // set mouseover effect with tooltip
       .on("mouseover", function(d) {
@@ -218,37 +216,37 @@ window.onload = function() {
         return updateGraph(dimBar, d.properties.iso_a3, marginsBar)
       })
 
-      // append legend to datamap
-      var legend = svg.selectAll(".legend")
-          .data(scores)
-          .enter().append('g')
-          .attr("class", "legend")
-          .attr("transform", function (d, i) {
-          {
-              return "translate(-75," + i * 20 + ")";
-          }
+    // append legend to datamap
+    var legend = svg.selectAll(".legend")
+      .data(scores)
+      .enter().append('g')
+      .attr("class", "legend")
+      .attr("transform", function(d, i) {
+        {
+          return "translate(-75," + i * 20 + ")";
+        }
       })
 
-      // append rectangles to legend
-      legend.append('rect')
-          .attr("x", 0)
-          .attr("y", 250)
-          .attr("width", 20)
-          .attr("height", 20)
-          .style("fill", function (d, i) {
-          return color(d - 1);
+    // append rectangles to legend
+    legend.append('rect')
+      .attr("x", 0)
+      .attr("y", 250)
+      .attr("width", 20)
+      .attr("height", 20)
+      .style("fill", function(d, i) {
+        return color(d - 1);
       })
 
-      // set the corresponding values in legend
-      legend.append('text')
-          .attr("x", 30)
-          .attr("y", 265)
-      .text(function (d, i) {
-          return "< " + d + "%";
+    // set the corresponding values in legend
+    legend.append('text')
+      .attr("x", 30)
+      .attr("y", 265)
+      .text(function(d, i) {
+        return "< " + d + "%";
       })
-          .attr("class", "textselected")
-          .style("text-anchor", "start")
-          .style("font-size", 15)
+      .attr("class", "textselected")
+      .style("text-anchor", "start")
+      .style("font-size", 15)
   }
 
   function findMaxObject(data) {
@@ -256,8 +254,8 @@ window.onload = function() {
 
     let keys = Object.keys(data);
     let maxValue = 0;
-    keys.forEach( function(key) {
-      if (data[key] > maxValue){
+    keys.forEach(function(key) {
+      if (data[key] > maxValue) {
         maxValue = data[key];
       }
     })
@@ -269,15 +267,14 @@ window.onload = function() {
 
     let keys = Object.keys(data);
     let minValue = 0;
-    keys.forEach( function(key) {
-      if (data[key] < minValue){
+    keys.forEach(function(key) {
+      if (data[key] < minValue) {
         minValue = data[key];
       }
     })
     if (minValue >= 0) {
       return 0;
-    }
-    else {
+    } else {
       return minValue;
     }
   }
@@ -308,11 +305,11 @@ window.onload = function() {
 
     // Set tooltip for barchart
     var tip = d3.tip()
-              .attr('class', "d3-tip")
-              .offset([0, 0])
-              .html(function(d, country) {
-                  return "<strong>" + d + ": " + "</strong><span class='details'>" + dim.data[country][d] + '%' + "<br></span>";
-                });
+      .attr('class', "d3-tip")
+      .offset([0, 0])
+      .html(function(d, country) {
+        return "<strong>" + d + ": " + "</strong><span class='details'>" + dim.data[country][d] + '%' + "<br></span>";
+      });
     svg.call(tip);
 
     // draw graph
@@ -330,8 +327,9 @@ window.onload = function() {
       })
       .attr("y", dim.height - margins.top)
       // adjust color bars according to their value
-      .attr("fill", function(d) {"rgb(0,90,50)"
-        return "rgb(0, " + (153 - dim.data[country][d] * 3) + "," + (84 - dim.data[country][d] * 3) +")";
+      .attr("fill", function(d) {
+        "rgb(0,90,50)"
+        return "rgb(0, " + (153 - dim.data[country][d] * 3) + "," + (84 - dim.data[country][d] * 3) + ")";
       })
       // set width and height of the bars
       .attr("width", (dim.width - margins.left - margins.right) / keys.length -
@@ -347,19 +345,19 @@ window.onload = function() {
         tip.hide(d, country);
       });
 
-      // let the bars appear animated.
-      myChart.transition()
-        .attr("height", function(d) {
-          return dim.height - margins.top - yScale(dim.data[country][d]);
-        })
-        .attr("y", function(d, i) {
-          return yScale(dim.data[country][d]);
-        })
-        .duration(dim.animateDuration)
-        .delay(function(d, j) {
-          return j * dim.animateDelay;
-        })
-        .ease(d3.easeElastic);
+    // let the bars appear animated.
+    myChart.transition()
+      .attr("height", function(d) {
+        return dim.height - margins.top - yScale(dim.data[country][d]);
+      })
+      .attr("y", function(d, i) {
+        return yScale(dim.data[country][d]);
+      })
+      .duration(dim.animateDuration)
+      .delay(function(d, j) {
+        return j * dim.animateDelay;
+      })
+      .ease(d3.easeElastic);
 
     // set scale for x axis with strings
     var xAxisScale = d3.scaleBand()
@@ -375,8 +373,7 @@ window.onload = function() {
     svg.append("g")
       .attr("class", "axis")
       .attr("id", "xAxis")
-      .attr("transform", "translate(0," + (dim.height -margins.top
-                                            ) + ")")
+      .attr("transform", "translate(0," + (dim.height - margins.top) + ")")
       .transition()
       .duration(dim.animateDuration)
       .call(xAxis)
@@ -386,7 +383,8 @@ window.onload = function() {
     // make y axis
     var yAxis = d3.axisLeft()
       .ticks(5)
-      .scale(yScale);
+      .scale(yScale)
+      .tickFormat(d => d + '%');
 
     // set yaxis at the appropriate place
     svg.append("g")
@@ -394,7 +392,6 @@ window.onload = function() {
       .attr("transform", "translate(" + margins.left + ",0)")
       .transition()
       .duration(dim.animateDuration)
-      // .ease(d3.easeLinear)
       .call(yAxis);
 
     // create Title
@@ -408,7 +405,7 @@ window.onload = function() {
 
     // create title y axis
     svg.append("text")
-      .attr("x", - (dim.width - margins.left - margins.right) / 1.75)
+      .attr("x", -(dim.width - margins.left - margins.right) / 1.75)
       .attr("y", (dim.height - margins.top - margins.bottom) / 6)
       .attr("transform", "rotate(-90)")
       .attr("id", "titleAxis")
@@ -430,7 +427,7 @@ window.onload = function() {
 
       // removes svg containing the barChart
       d3.select("#barChart")
-      .remove();
+        .remove();
 
       // returns function to draw barchart with selected country
       return drawBarChart("#area2", margins, dim, "barChart", country);
