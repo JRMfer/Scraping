@@ -20,6 +20,12 @@ which is dynamically programmed and has some interactive features as change of c
 Github page: https://jrmfer.github.io/dataprocessing/Homework/Week_4/index.html
 
 ## Homework/Week_5: D3 Scatterplot
-This assignment retrieves a dataset trough the use of an API, preprocces the data and evuantually draws a scatterplot.
+This assignment retrieves a dataset trough the use of an API, preprocces the data and eventually draws a scatterplot.
 
 Github page: https://jrmfer.github.io/dataprocessing/Homework/Week_5/scatter.html
+
+## Homewerk/Week_6: D3 Linked Views
+In this assignment we created a linked view between a datamap of Europe and a barchart. The data for the barchart
+is preproccesed in convertCSV2JSON.py. The data for the datamap is imported trough the use of an API and with the help of d3 in linkedViews.js.
+
+Github page: https://jrmfer.github.io/dataprocessing/Homework/Week_5/linkedViews.html

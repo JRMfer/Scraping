@@ -48,19 +48,19 @@ var marginsMap = {
   "right": 100,
   "top": 0,
   "bottom": 0
-}
+};
 
 var dimMap = {
   "width": 850 - marginsMap.right - marginsMap.left,
   "height": 550 - marginsMap.top - marginsMap.bottom
-}
+};
 
 var marginsBar = {
   "left": 100,
   "right": 100,
   "top": 100,
   "bottom": 100
-}
+};
 
 var dimBar =  {
   "width": 650,
@@ -132,7 +132,7 @@ window.onload = function() {
 
     // add title, a few paragraphs and link to dataset to the body
     title("Government spending 2014");
-    addParagraph("This page shows the central goverment spending in (2014) for countries in the OECD. In the map of Europe one sees ,while hovering over a country, the sum of government spending on 5 categorires as a percentage on the total goverment spending. When you click on the country the barchart will show the percentage of spending in the following 5 categories: ", "explanation");
+    addParagraph("This page shows the central goverment spending in (2014) for countries in the OECD. It tries to visualize which subject has priority, in terms of goverment spending, in each country. In the map of Europe one sees ,while hovering over a country, the sum of government spending on 5 categorires as a percentage on the total goverment spending. When you click on the country the barchart will show the percentage of spending in the following 5 categories: ", "explanation");
     var names = ["Economic Affairs (ECOAFF)", "Education (EDU)", "Health (Health)", "Housing and community amenities (HOUCOMM)", "Social protection (SOCPROT)"];
 
     // append bullet points to paragraph with explanation
@@ -331,7 +331,7 @@ window.onload = function() {
       .attr("y", dim.height - margins.top)
       // adjust color bars according to their value
       .attr("fill", function(d) {"rgb(0,90,50)"
-        return "rgb(0, " + (153 - dim.data[country][d] * 2) + "," + (84 - dim.data[country][d] * 2) +")";
+        return "rgb(0, " + (153 - dim.data[country][d] * 3) + "," + (84 - dim.data[country][d] * 3) +")";
       })
       // set width and height of the bars
       .attr("width", (dim.width - margins.left - margins.right) / keys.length -

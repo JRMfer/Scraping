@@ -5,7 +5,7 @@
 
 /* set background div */
 div {
-  background: #ADD8E6;
+  background: white;
 }
 
 /* center headers and set style */
@@ -25,7 +25,11 @@ h1, h2 {
 /* set style paths datmap */
 .country {
   stroke: #333333;
-  stroke-width: 0.5;
+  stroke-width: 1.25;
+  opacity: 0.8;
+}
+
+.bar {
   opacity: 0.8;
 }
 
@@ -37,6 +41,7 @@ h1, h2 {
 
 /* set style paths country when hovering */
 .selected {
+  /* fill: #ff9900; */
   stroke: #333333;
   stroke-width: 3;
   opacity: 1;
